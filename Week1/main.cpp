@@ -1,8 +1,21 @@
 #include <iostream>
 
 #include "Coordinate.h"
+#include "SinglyLinkedList.h"
 
-int main() {
+void coordinate();
+void singlyLinkedList();
+
+int main()
+{
+    coordinate();
+    singlyLinkedList();
+
+    return 0;
+}
+
+void coordinate()
+{
     Coordinate p1 = Coordinate(1,2); // stack allocation
     Coordinate p2(3,7); // stack allocation
     p1.xco = 4;
@@ -18,5 +31,28 @@ int main() {
 
     delete coPtr; // heap deallocation
     coPtr = nullptr; // set to null pointer to avoid dangling pointer
-    return 0;
+}
+
+void singlyLinkedList()
+{
+    SinglyLinkedList list;
+    list.insert('a');
+    list.insert('b');
+    list.insert('c');
+    list.insert('d');
+    list.insert('e');
+
+    list.display();
+
+    std::cout << std::boolalpha << "c: " << list.search('c') << std::endl;
+    std::cout << std::boolalpha << "g: " << list.search('g') << std::endl;
+
+    SinglyLinkedList list2;
+    list2.insert_back('a');
+    list2.insert_back('b');
+    list2.insert_back('c');
+    list2.insert_back('d');
+    list2.insert_back('e');
+
+    list2.display();
 }
