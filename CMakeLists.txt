@@ -3,12 +3,6 @@ project(ASE_Solutions)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(ASE_Solutions main.cpp
-        Week1/Coordinate.cpp
-        Week1/Coordinate.h
+add_subdirectory(Week1)
 
-
-
-
-
-)
+add_executable(ASE_Solutions main.cpp)
