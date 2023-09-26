@@ -2,7 +2,7 @@
 #include <string>
 #include "Dictionary.h"
 
-void isPresent(Dictionary & dict, int k, std::string i)
+void isPresent(Dictionary & dict, int k, const std::string& i)
 {
     std::string* p_i = dict.lookup(k);
     assert(p_i);
