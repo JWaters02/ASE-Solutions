@@ -2,7 +2,7 @@
 #include <string>
 #include "Dictionary.h"
 
-void isPresent(Dictionary & dict, int k, const std::string& i)
+void isPresent(Dictionary<int, std::string>& dict, int k, const std::string& i)
 {
     std::string* p_i = dict.lookup(k);
     assert(p_i);
@@ -12,12 +12,12 @@ void isPresent(Dictionary & dict, int k, const std::string& i)
     }
 }
 
-void isAbsent(Dictionary & dict, int k)
+void isAbsent(Dictionary<int, std::string>& dict, int k)
 {
     ASSERT_EQ(dict.lookup(k), nullptr);
 }
 
-void insertTestData(Dictionary & dict)
+void insertTestData(Dictionary<int, std::string>& dict)
 {
     dict.insert(22, "Jane");
     dict.insert(22, "Mary");
@@ -41,26 +41,26 @@ void insertTestData(Dictionary & dict)
 
 TEST(Lookup_Insert_Tests, EmptyLookup)
 {
-    Dictionary dict;
+    Dictionary<int, std::string> dict;
     isAbsent(dict,1);
 }
 
 TEST(Lookup_Insert_Tests, SingleInsert)
 {
-    Dictionary dict;
+    Dictionary<int, std::string> dict;
     dict.insert(22,  "Mary");
 }
 
 TEST(Lookup_Insert_Tests, SingleInsertLookup)
 {
-    Dictionary dict;
+    Dictionary<int, std::string> dict;
     dict.insert(22, "Mary");
     isPresent(dict,22,"Mary");
 }
 
 TEST(Lookup_Insert_Tests, SingleOverwriteLookup)
 {
-    Dictionary dict;
+    Dictionary<int, std::string> dict;
     dict.insert(22, "Jane");
     dict.insert(22, "Mary");
     isPresent(dict,22,"Mary");
@@ -68,13 +68,13 @@ TEST(Lookup_Insert_Tests, SingleOverwriteLookup)
 
 TEST(Lookup_Insert_Tests, MultipleInsert)
 {
-    Dictionary dict;
+    Dictionary<int, std::string> dict;
     insertTestData(dict);
 }
 
 TEST(Lookup_Insert_Tests, MultipleInsertLookupPresent)
 {
-    Dictionary dict;
+    Dictionary<int, std::string> dict;
     insertTestData(dict);
 
     isPresent(dict,22,"Mary");
@@ -94,7 +94,7 @@ TEST(Lookup_Insert_Tests, MultipleInsertLookupPresent)
 
 TEST(Lookup_Insert_Tests, MultipleInsertLookupAbsent)
 {
-    Dictionary dict;
+    Dictionary<int, std::string> dict;
     insertTestData(dict);
 
     isAbsent(dict,2);

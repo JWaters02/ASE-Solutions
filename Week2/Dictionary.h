@@ -4,24 +4,7 @@
 #include <iostream>
 #include <utility>
 
-struct Node
-{
-public:
-    Node(int key, std::string item, Node* right = nullptr, Node* left = nullptr)
-    {
-        this->key = key;
-        this->item = std::move(item);
-        this->right = right;
-        this->left = left;
-    }
-
-    int key;
-    std::string item;
-    
-    Node* left;
-    Node* right;
-};
-
+template <typename KeyType, typename ItemType>
 class Dictionary
 {
 public:
@@ -31,17 +14,43 @@ public:
         size = 0;
     }
 
-    void insert(int key, const std::string& item);
-    std::string* lookup(int key);
+    void insert(KeyType key, const ItemType& item);
+    ItemType* lookup(KeyType key);
 
 private:
-    Node* root;
-    int size;
+    struct Node;
+    Node* root = nullptr;
+    KeyType size = 0;
+
+    static bool isLeaf(Node* node)
+    {
+        return node == nullptr;
+    }
 };
 
-void Dictionary::insert(int key, const std::string& item)
+template <typename KeyType, typename ItemType>
+struct Dictionary<KeyType, ItemType>::Node
 {
-    if (root == nullptr)
+public:
+    Node(KeyType key, ItemType item, Node* right = nullptr, Node* left = nullptr)
+    {
+        this->key = key;
+        this->item = std::move(item);
+        this->right = right;
+        this->left = left;
+    }
+
+    KeyType key;
+    ItemType item;
+
+    Node* left = nullptr;
+    Node* right = nullptr;
+};
+
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::insert(KeyType key, const ItemType& item)
+{
+    if (isLeaf(root))
     {
         root = new Node(key, item);
     }
@@ -49,7 +58,7 @@ void Dictionary::insert(int key, const std::string& item)
     {
         Node* current = root;
 
-        while (current != nullptr)
+        while (!isLeaf(current))
         {
             if (current->key == key)
             {
@@ -58,7 +67,7 @@ void Dictionary::insert(int key, const std::string& item)
             }
             else if (current->key > key)
             {
-                if (current->right == nullptr)
+                if (isLeaf(current->right))
                 {
                     current->right = new Node(key, item);
                     break;
@@ -70,7 +79,7 @@ void Dictionary::insert(int key, const std::string& item)
             }
             else if (current->key < key)
             {
-                if (current->left == nullptr)
+                if (isLeaf(current->left))
                 {
                     current->left = new Node(key, item);
                     break;
@@ -84,10 +93,11 @@ void Dictionary::insert(int key, const std::string& item)
     }
 }
 
-std::string* Dictionary::lookup(int key)
+template <typename KeyType, typename ItemType>
+ItemType* Dictionary<KeyType, ItemType>::lookup(KeyType key)
 {
     Node* current = root;
-    while (current != nullptr)
+    while (!isLeaf(current))
     {
         if (current->key == key)
         {
