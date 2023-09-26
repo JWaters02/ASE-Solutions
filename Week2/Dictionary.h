@@ -7,7 +7,7 @@
 struct Node
 {
 public:
-    Node(int key, std::string* item, Node* next = nullptr)
+    Node(int key, std::string item, Node* next = nullptr)
     {
         this->key = key;
         this->item = item;
@@ -15,7 +15,7 @@ public:
     }
 
     int key;
-    std::string* item;
+    std::string item;
     Node* next;
 };
 
@@ -28,7 +28,7 @@ public:
         size = 0;
     }
 
-    void insert(int key, std::string* item);
+    void insert(int key, std::string item);
     std::string* lookup(int key);
 
 private:
@@ -36,7 +36,7 @@ private:
     int size;
 };
 
-void Dictionary::insert(int key, std::string* item)
+void Dictionary::insert(int key, std::string item)
 {
     if (head == nullptr)
     {
@@ -45,18 +45,24 @@ void Dictionary::insert(int key, std::string* item)
     else
     {
         Node* current = head;
+
         while (current->next != nullptr)
         {
             if (key == current->key)
             {
                 current->item = item;
             }
-            else
-            {
-                current = current->next;
-            }
+            current = current->next;
         }
-        current->next = new Node(key, item);
+
+        if (key == current->key)
+        {
+            current->item = item;
+        }
+        else
+        {
+            current->next = new Node(key, item);
+        }
     }
 }
 
@@ -67,7 +73,9 @@ std::string* Dictionary::lookup(int key)
     {
         if (current->key == key)
         {
-            return current->item;
+            auto* temp = new std::string;
+            *temp = current->item;
+            return temp;
         }
         current = current->next;
     }

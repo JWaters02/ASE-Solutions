@@ -32,5 +32,3 @@
 *.app
 
 cmake-build-debug
-
-boost
