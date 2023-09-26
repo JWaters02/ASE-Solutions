@@ -7,16 +7,19 @@
 struct Node
 {
 public:
-    Node(int key, std::string item, Node* next = nullptr)
+    Node(int key, std::string item, Node* right = nullptr, Node* left = nullptr)
     {
         this->key = key;
-        this->item = item;
-        this->next = next;
+        this->item = std::move(item);
+        this->right = right;
+        this->left = left;
     }
 
     int key;
     std::string item;
-    Node* next;
+    
+    Node* left;
+    Node* right;
 };
 
 class Dictionary
@@ -24,60 +27,80 @@ class Dictionary
 public:
     Dictionary()
     {
-        head = nullptr;
+        root = nullptr;
         size = 0;
     }
 
-    void insert(int key, std::string item);
+    void insert(int key, const std::string& item);
     std::string* lookup(int key);
 
 private:
-    Node* head;
+    Node* root;
     int size;
 };
 
-void Dictionary::insert(int key, std::string item)
+void Dictionary::insert(int key, const std::string& item)
 {
-    if (head == nullptr)
+    if (root == nullptr)
     {
-        head = new Node(key, item);
+        root = new Node(key, item);
     }
     else
     {
-        Node* current = head;
+        Node* current = root;
 
-        while (current->next != nullptr)
+        while (current != nullptr)
         {
-            if (key == current->key)
+            if (current->key == key)
             {
                 current->item = item;
+                break;
             }
-            current = current->next;
-        }
-
-        if (key == current->key)
-        {
-            current->item = item;
-        }
-        else
-        {
-            current->next = new Node(key, item);
+            else if (current->key > key)
+            {
+                if (current->right == nullptr)
+                {
+                    current->right = new Node(key, item);
+                    break;
+                }
+                else
+                {
+                    current = current->right;
+                }
+            }
+            else if (current->key < key)
+            {
+                if (current->left == nullptr)
+                {
+                    current->left = new Node(key, item);
+                    break;
+                }
+                else
+                {
+                    current = current->left;
+                }
+            }
         }
     }
 }
 
 std::string* Dictionary::lookup(int key)
 {
-    Node* current = head;
+    Node* current = root;
     while (current != nullptr)
     {
         if (current->key == key)
         {
-            auto* temp = new std::string;
-            *temp = current->item;
-            return temp;
+            return &current->item;
         }
-        current = current->next;
+        else if (current->key > key)
+        {
+            current = current->right;
+        }
+        else
+        {
+            current = current->left;
+        }
     }
     return nullptr;
 }
