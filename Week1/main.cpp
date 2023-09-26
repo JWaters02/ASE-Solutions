@@ -87,4 +87,12 @@ void dynamicArray()
     arr.write_at(3, 'w'); // should be empty, as size and capacity are 3
 
     arr.display();
+
+    DynamicArray<int> arr2;
+    arr2.push_back(2);
+    arr2.push_back(3);
+
+    arr2.pop_back();
+
+    arr2.display();
 }

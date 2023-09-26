@@ -36,7 +36,7 @@ void DynamicArray<T>::push_back(T data)
     if (size == capacity)
     {
         capacity == 0 ? capacity = 1 : capacity *= 2;
-        char* newPointer = new char[capacity];
+        T* newPointer = new T[capacity];
         for (int i = 0; i < size; i++)
         {
             newPointer[i] = pointer[i];
