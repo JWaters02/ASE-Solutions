@@ -2,14 +2,17 @@
 
 #include "Coordinate.h"
 #include "SinglyLinkedList.h"
+#include "DynamicArray.h"
 
 void coordinate();
 void singlyLinkedList();
+void dynamicArray();
 
 int main()
 {
-    coordinate();
-    singlyLinkedList();
+    //coordinate();
+    //singlyLinkedList();
+    dynamicArray();
 
     return 0;
 }
@@ -55,4 +58,33 @@ void singlyLinkedList()
     list2.insert_back('e');
 
     list2.display();
+}
+
+void dynamicArray()
+{
+    DynamicArray<char> arr;
+    arr.push_back('a');
+    arr.push_back('b');
+    arr.push_back('c');
+    arr.push_back('d');
+    arr.push_back('e');
+
+    arr.display();
+
+    arr.pop_back();
+    arr.pop_back();
+
+    arr.display();
+
+    std::cout << arr.read_at(0) << std::endl;
+    std::cout << arr.read_at(1) << std::endl;
+    std::cout << arr.read_at(2) << std::endl;
+    std::cout << arr.read_at(3) << std::endl; // should be empty (\0)
+
+    arr.write_at(0, 'z');
+    arr.write_at(1, 'y');
+    arr.write_at(2, 'x');
+    arr.write_at(3, 'w'); // should be empty, as size and capacity are 3
+
+    arr.display();
 }

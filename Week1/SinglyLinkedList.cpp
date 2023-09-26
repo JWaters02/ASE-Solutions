@@ -1,4 +1,4 @@
-#include "singlyLinkedList.h"
+#include "SinglyLinkedList.h"
 
 Node::Node(char data, Node *next)
 {
