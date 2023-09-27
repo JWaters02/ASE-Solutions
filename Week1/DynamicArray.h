@@ -8,6 +8,10 @@ class DynamicArray
 {
 public:
     DynamicArray();
+    ~DynamicArray()
+    {
+        delete[] pointer;
+    }
 
     void push_back(T data);
     void pop_back();
