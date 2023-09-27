@@ -18,7 +18,10 @@ public:
     Dictionary()
     {
         root = nullptr;
-        size = 0;
+    }
+    ~Dictionary()
+    {
+        deepDeleteWorker(root);
     }
 
     void insert(KeyType key, const ItemType& item);
@@ -30,11 +33,11 @@ public:
 private:
     struct Node;
     Node* root = nullptr;
-    KeyType size = 0;
 
     void insertWorker(KeyType key, const ItemType& item, Node* node = nullptr);
     ItemType* lookupWorker(KeyType key, Node* node = nullptr);
     void removeWorker(KeyType key, Node*& node = nullptr);
+    void deepDeleteWorker(Node* node);
     void displayEntriesWorker(Node* node, TraversalType traversalType);
     void displayTreeStructure(Node* node, int depth);
     void displayTreeWorker(Node* node, int depth, TraversalType traversalType);
@@ -213,6 +216,16 @@ void Dictionary<KeyType, ItemType>::removeWorker(KeyType key, Dictionary::Node*&
     }
     else if (node->key > key) removeWorker(key, node->right);
     else if (node->key < key) removeWorker(key, node->left);
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::deepDeleteWorker(Dictionary::Node *node)
+{
+    if (isLeaf(node)) return;
+
+    deepDeleteWorker(node->left);
+    deepDeleteWorker(node->right);
+    delete node;
 }
 
 template <typename KeyType, typename ItemType>
