@@ -23,6 +23,7 @@ public:
 
     void insert(KeyType key, const ItemType& item);
     ItemType* lookup(KeyType key);
+    void remove(KeyType key);
     void displayEntries(TraversalType traversalType = TraversalType::IN_ORDER);
     void displayTree(TraversalType traversalType = TraversalType::IN_ORDER);
 
@@ -33,6 +34,7 @@ private:
 
     void insertWorker(KeyType key, const ItemType& item, Node* node = nullptr);
     ItemType* lookupWorker(KeyType key, Node* node = nullptr);
+    void removeWorker(KeyType key, Node*& node = nullptr);
     void displayEntriesWorker(Node* node, TraversalType traversalType);
     void displayTreeStructure(Node* node, int depth);
     void displayTreeWorker(Node* node, int depth, TraversalType traversalType);
@@ -179,6 +181,38 @@ ItemType* Dictionary<KeyType, ItemType>::lookupWorker(KeyType key, Dictionary::N
     if (node->key < key && !isLeaf(node->left)) return lookupWorker(key, node->left);
 
     return nullptr;
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::remove(KeyType key)
+{
+    removeWorker(key, root);
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::removeWorker(KeyType key, Dictionary::Node*& node)
+{
+    if (isLeaf(node)) return;
+
+    if (node->key == key)
+    {
+        if (isLeaf(node->left) && isLeaf(node->right))
+        {
+            delete node;
+            node = nullptr;
+        }
+        else if (isLeaf(node->left)) node = node->right;
+        else if (isLeaf(node->right)) node = node->left;
+        else {
+            Node *current = node->right;
+            while (!isLeaf(current->left)) current = current->left;
+            node->key = current->key;
+            node->item = current->item;
+            removeWorker(current->key, node->right);
+        }
+    }
+    else if (node->key > key) removeWorker(key, node->right);
+    else if (node->key < key) removeWorker(key, node->left);
 }
 
 template <typename KeyType, typename ItemType>
