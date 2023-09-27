@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "Dictionary.h"
 
@@ -22,6 +23,12 @@ int main() {
     dict.insert(26,"Charles");
 
     dict.displayEntries();
+    std::ofstream file("tree.txt");
+    dict.displayEntries(file);
+
     dict.displayTree();
+    std::ofstream file2("formatted_tree.txt");
+    dict.displayTree(file2);
+
     return 0;
 }

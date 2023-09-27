@@ -378,3 +378,16 @@ TEST(Copy_Constructor_Tests, CopyConstructorIsDeep)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+TEST(Display_Entries_Test, String_Stream_Check)
+{
+    Dictionary<int, std::string> dict;
+    dict.insert(22,"Jane");
+    dict.insert(4,"Mary");
+
+    std::stringstream ss;
+    dict.displayEntries(ss);
+
+    std::string expected = "22 Jane\n4 Mary\n";
+    ASSERT_EQ(ss.str(), expected);
+}

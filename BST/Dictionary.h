@@ -31,8 +31,8 @@ public:
     void insert(KeyType key, const ItemType& item);
     ItemType* lookup(KeyType key);
     void remove(KeyType key);
-    void displayEntries(TraversalType traversalType = TraversalType::IN_ORDER);
-    void displayTree(TraversalType traversalType = TraversalType::IN_ORDER);
+    void displayEntries(std::ostream& stream = std::cout, TraversalType traversalType = TraversalType::IN_ORDER);
+    void displayTree(std::ostream& stream = std::cout, TraversalType traversalType = TraversalType::IN_ORDER);
 
 private:
     struct Node;
@@ -43,9 +43,10 @@ private:
     void removeWorker(KeyType key, Node*& node = nullptr);
     void deepDeleteWorker(Node* node);
     Node* deepCopyWorker(Node* node);
-    void displayEntriesWorker(Node* node, TraversalType traversalType);
-    void displayTreeStructure(Node* node, int depth);
-    void displayTreeWorker(Node* node, int depth, TraversalType traversalType);
+    void displayEntriesWorker(Node* node, std::ostream& stream, TraversalType traversalType);
+    void displayTreeStructure(Dictionary::Node *node, int depth, std::ostream &stream);
+    void displayTreeWorker(Dictionary::Node *node, int depth, std::ostream &stream,
+                           TraversalType traversalType);
     static bool isLeaf(Node* node)
     {
         return node == nullptr;
@@ -245,58 +246,59 @@ typename Dictionary<KeyType, ItemType>::Node* Dictionary<KeyType, ItemType>::dee
 }
 
 template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayEntries(TraversalType traversalType)
+void Dictionary<KeyType, ItemType>::displayEntries(std::ostream& stream, TraversalType traversalType)
 {
-    displayEntriesWorker(root, traversalType);
+    displayEntriesWorker(root, stream, traversalType);
 }
 
 template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayTree(TraversalType traversalType)
+void Dictionary<KeyType, ItemType>::displayTree(std::ostream& stream, TraversalType traversalType)
 {
-    displayTreeWorker(root, 0, traversalType);
+    displayTreeWorker(root, 0, stream, traversalType);
 }
 
 template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node* node, TraversalType traversalType)
+void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node* node, std::ostream& stream, TraversalType traversalType)
 {
     if (isLeaf(node)) return;
 
-    if (traversalType == TraversalType::PRE_ORDER) std::cout << node->key << " " << node->item << std::endl;
+    if (traversalType == TraversalType::PRE_ORDER) stream << node->key << " " << node->item << std::endl;
 
-    displayEntriesWorker(node->left, TraversalType::PRE_ORDER);
+    displayEntriesWorker(node->left, stream, TraversalType::PRE_ORDER);
 
-    if (traversalType == TraversalType::IN_ORDER) std::cout << node->key << " " << node->item << std::endl;
+    if (traversalType == TraversalType::IN_ORDER) stream << node->key << " " << node->item << std::endl;
 
-    displayEntriesWorker(node->right, TraversalType::PRE_ORDER);
+    displayEntriesWorker(node->right, stream, TraversalType::PRE_ORDER);
 
-    if (traversalType == TraversalType::POST_ORDER) std::cout << node->key << " " << node->item << std::endl;
+    if (traversalType == TraversalType::POST_ORDER) stream << node->key << " " << node->item << std::endl;
 }
 
 template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayTreeStructure(Dictionary::Node* node, int depth) {
-    for (int i = 0; i < depth; i++) { std::cout << "- "; }
-    std::cout << node->key << " " << node->item << std::endl;
+void Dictionary<KeyType, ItemType>::displayTreeStructure(Dictionary::Node* node, int depth, std::ostream& stream) {
+    for (int i = 0; i < depth; i++) { stream << "- "; }
+    stream << node->key << " " << node->item << std::endl;
     if (isLeaf(node->left) && isLeaf(node->right))
     {
-        for (int i = 0; i < depth; i++) { std::cout << "- "; }
-        std::cout << "*" << std::endl;
+        for (int i = 0; i < depth; i++) { stream << "- "; }
+        stream << "*" << std::endl;
     }
 }
 
 template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayTreeWorker(Dictionary::Node* node, int depth, TraversalType traversalType)
+void Dictionary<KeyType, ItemType>::displayTreeWorker(Dictionary::Node* node, int depth, std::ostream& stream,
+                                                      TraversalType traversalType)
 {
     if (isLeaf(node)) return;
 
-    if (traversalType == TraversalType::PRE_ORDER) displayTreeStructure(node, depth);
+    if (traversalType == TraversalType::PRE_ORDER) displayTreeStructure(node, depth, stream);
 
-    displayTreeWorker(node->right, depth + 1, TraversalType::PRE_ORDER);
+    displayTreeWorker(node->right, depth + 1, stream, TraversalType::PRE_ORDER);
 
-    if (traversalType == TraversalType::IN_ORDER) displayTreeStructure(node, depth);
+    if (traversalType == TraversalType::IN_ORDER) displayTreeStructure(node, depth, stream);
 
-    displayTreeWorker(node->left, depth + 1, TraversalType::PRE_ORDER);
+    displayTreeWorker(node->left, depth + 1, stream, TraversalType::PRE_ORDER);
 
-    if (traversalType == TraversalType::POST_ORDER) displayTreeStructure(node, depth);
+    if (traversalType == TraversalType::POST_ORDER) displayTreeStructure(node, depth, stream);
 }
 
 #endif //ASE_SOLUTIONS_DICTIONARY_H
