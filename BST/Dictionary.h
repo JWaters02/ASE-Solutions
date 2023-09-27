@@ -19,6 +19,10 @@ public:
     {
         root = nullptr;
     }
+    Dictionary(const Dictionary& copy)
+    {
+        root = deepCopyWorker(copy.root);
+    };
     ~Dictionary()
     {
         deepDeleteWorker(root);
@@ -38,6 +42,7 @@ private:
     ItemType* lookupWorker(KeyType key, Node* node = nullptr);
     void removeWorker(KeyType key, Node*& node = nullptr);
     void deepDeleteWorker(Node* node);
+    Node* deepCopyWorker(Node* node);
     void displayEntriesWorker(Node* node, TraversalType traversalType);
     void displayTreeStructure(Node* node, int depth);
     void displayTreeWorker(Node* node, int depth, TraversalType traversalType);
@@ -219,13 +224,24 @@ void Dictionary<KeyType, ItemType>::removeWorker(KeyType key, Dictionary::Node*&
 }
 
 template<typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::deepDeleteWorker(Dictionary::Node *node)
+void Dictionary<KeyType, ItemType>::deepDeleteWorker(Dictionary::Node* node)
 {
     if (isLeaf(node)) return;
 
     deepDeleteWorker(node->left);
     deepDeleteWorker(node->right);
     delete node;
+}
+
+template <typename KeyType, typename ItemType>
+typename Dictionary<KeyType, ItemType>::Node* Dictionary<KeyType, ItemType>::deepCopyWorker(Dictionary::Node* node)
+{
+    if (isLeaf(node)) return nullptr;
+
+    Node* newNode = new Node(node->key, node->item);
+    newNode->left = deepCopyWorker(node->left);
+    newNode->right = deepCopyWorker(node->right);
+    return newNode;
 }
 
 template <typename KeyType, typename ItemType>

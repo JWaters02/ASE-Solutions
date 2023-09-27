@@ -308,3 +308,73 @@ TEST(Remove_Tests, InsertMany_RemoveAbsent)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+TEST(Copy_Constructor_Tests, CopyConstructorFullyCopies)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2(dict1);
+
+    isPresent(dict2,22,"Mary");
+    isPresent(dict2,4,"Stephen");
+    isPresent(dict2,9,"Edward");
+    isPresent(dict2,1,"William");
+    isPresent(dict2,0,"Harold");
+    isPresent(dict2,24,"James");
+    isPresent(dict2,26,"Charles");
+    isPresent(dict2,19,"Henry");
+    isPresent(dict2,31,"Anne");
+    isPresent(dict2,23,"Elizabeth");
+    isPresent(dict2,37,"Victoria");
+    isPresent(dict2,42,"Elizabeth");
+    isPresent(dict2,-1,"Edward");
+}
+
+TEST(Copy_Constructor_Tests, CopyConstructorDoesNotDeleteSource)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2(dict1);
+
+    isPresent(dict1,22,"Mary");
+    isPresent(dict1,4,"Stephen");
+    isPresent(dict1,9,"Edward");
+    isPresent(dict1,1,"William");
+    isPresent(dict1,0,"Harold");
+    isPresent(dict1,24,"James");
+    isPresent(dict1,26,"Charles");
+    isPresent(dict1,19,"Henry");
+    isPresent(dict1,31,"Anne");
+    isPresent(dict1,23,"Elizabeth");
+    isPresent(dict1,37,"Victoria");
+    isPresent(dict1,42,"Elizabeth");
+    isPresent(dict1,-1,"Edward");
+}
+
+TEST(Copy_Constructor_Tests, CopyConstructorIsDeep)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2(dict1);
+
+    dict1.insert(2,"William");
+    isPresent(dict1,2,"William");
+    isAbsent(dict2,2);
+
+    dict2.insert(3,"Henry");
+    isPresent(dict2,3,"Henry");
+    isAbsent(dict1,3);
+
+    dict1.remove(24);
+    isAbsent(dict1,24);
+    isPresent(dict2,24,"James");
+
+    dict2.remove(26);
+    isAbsent(dict2,26);
+    isPresent(dict1,26,"Charles");
+}
+
+////////////////////////////////////////////////////////////////////////////////
