@@ -38,7 +38,7 @@ private:
     struct Node;
     Node* root = nullptr;
 
-    void insertWorker(KeyType key, const ItemType& item, Node* node = nullptr);
+    void insertWorker(KeyType key, const ItemType& item, Dictionary::Node*& node = nullptr);
     ItemType* lookupWorker(KeyType key, Node* node = nullptr);
     void removeWorker(KeyType key, Node*& node = nullptr);
     void deepDeleteWorker(Node* node);
@@ -120,40 +120,13 @@ void Dictionary<KeyType, ItemType>::insert(KeyType key, const ItemType& item)
 }
 
 template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::insertWorker(KeyType key, const ItemType& item, Dictionary::Node* node)
+void Dictionary<KeyType, ItemType>::insertWorker(KeyType key, const ItemType& item, Dictionary::Node*& node)
 {
-    if (isLeaf(root))
-    {
-        root = new Node(key, item);
-    }
-    else
-    {
-        if (node->key == key)
-        {
-            node->item = item;
-        }
-        else if (node->key > key)
-        {
-            if (isLeaf(node->right))
-            {
-                node->right = new Node(key, item);
-            }
-            else
-            {
-                insertWorker(key, item, node->right);
-            }
-        }
-        else if (node->key < key)
-        {
-            if (isLeaf(node->left))
-            {
-                node->left = new Node(key, item);
-            }
-            else
-            {
-                insertWorker(key, item, node->left);
-            }
-        }
+    if (isLeaf(node)) node = new Node(key, item);
+    else {
+        if (node->key == key) node->item = item;
+        else if (node->key > key) insertWorker(key, item, node->right);
+        else if (node->key < key) insertWorker(key, item, node->left);
     }
 }
 
@@ -252,12 +225,6 @@ void Dictionary<KeyType, ItemType>::displayEntries(std::ostream& stream, Travers
 }
 
 template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayTree(std::ostream& stream, TraversalType traversalType)
-{
-    displayTreeWorker(root, 0, stream, traversalType);
-}
-
-template <typename KeyType, typename ItemType>
 void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node* node, std::ostream& stream, TraversalType traversalType)
 {
     if (isLeaf(node)) return;
@@ -271,6 +238,12 @@ void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node* node,
     displayEntriesWorker(node->right, stream, TraversalType::PRE_ORDER);
 
     if (traversalType == TraversalType::POST_ORDER) stream << node->key << " " << node->item << std::endl;
+}
+
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayTree(std::ostream& stream, TraversalType traversalType)
+{
+    displayTreeWorker(root, 0, stream, traversalType);
 }
 
 template <typename KeyType, typename ItemType>
