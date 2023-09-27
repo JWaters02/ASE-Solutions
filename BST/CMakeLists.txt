@@ -15,7 +15,7 @@ add_executable(BST_Solutions
         main.cpp
         Dictionary.h)
 
-add_executable(Week2Tests
+add_executable(BST_Tests
         Dictionary.h
         DictionaryTests.cpp)
-target_link_libraries(Week2Tests PRIVATE GTest::gtest_main)
+target_link_libraries(BST_Tests PRIVATE GTest::gtest_main)

@@ -31,9 +31,11 @@ private:
     Node* root = nullptr;
     KeyType size = 0;
 
-    void displayEntriesWorker(Node *node, TraversalType traversalType);
+    void insertWorker(KeyType key, const ItemType& item, Node* node = nullptr);
+    ItemType* lookupWorker(KeyType key, Node* node = nullptr);
+    void displayEntriesWorker(Node* node, TraversalType traversalType);
     void displayTreeStructure(Node* node, int depth);
-    void displayTreeWorker(Node *node, int depth, TraversalType traversalType);
+    void displayTreeWorker(Node* node, int depth, TraversalType traversalType);
     static bool isLeaf(Node* node)
     {
         return node == nullptr;
@@ -62,7 +64,8 @@ public:
 template <typename KeyType, typename ItemType>
 void Dictionary<KeyType, ItemType>::insert(KeyType key, const ItemType& item)
 {
-    if (isLeaf(root))
+    insertWorker(key, item, root);
+    /*if (isLeaf(root))
     {
         root = new Node(key, item);
     }
@@ -102,13 +105,52 @@ void Dictionary<KeyType, ItemType>::insert(KeyType key, const ItemType& item)
                 }
             }
         }
+    }*/
+}
+
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::insertWorker(KeyType key, const ItemType& item, Dictionary::Node* node)
+{
+    if (isLeaf(root))
+    {
+        root = new Node(key, item);
+    }
+    else
+    {
+        if (node->key == key)
+        {
+            node->item = item;
+        }
+        else if (node->key > key)
+        {
+            if (isLeaf(node->right))
+            {
+                node->right = new Node(key, item);
+            }
+            else
+            {
+                insertWorker(key, item, node->right);
+            }
+        }
+        else if (node->key < key)
+        {
+            if (isLeaf(node->left))
+            {
+                node->left = new Node(key, item);
+            }
+            else
+            {
+                insertWorker(key, item, node->left);
+            }
+        }
     }
 }
 
 template <typename KeyType, typename ItemType>
 ItemType* Dictionary<KeyType, ItemType>::lookup(KeyType key)
 {
-    Node* current = root;
+    return lookupWorker(key, root);
+    /*Node* current = root;
     while (!isLeaf(current))
     {
         if (current->key == key)
@@ -124,6 +166,18 @@ ItemType* Dictionary<KeyType, ItemType>::lookup(KeyType key)
             current = current->left;
         }
     }
+    return nullptr;*/
+}
+
+template <typename KeyType, typename ItemType>
+ItemType* Dictionary<KeyType, ItemType>::lookupWorker(KeyType key, Dictionary::Node* node)
+{
+    if (isLeaf(node)) return nullptr;
+
+    if (node->key == key) return &node->item;
+    if (node->key > key && !isLeaf(node->right)) return lookupWorker(key, node->right);
+    if (node->key < key && !isLeaf(node->left)) return lookupWorker(key, node->left);
+
     return nullptr;
 }
 
@@ -139,8 +193,8 @@ void Dictionary<KeyType, ItemType>::displayTree(TraversalType traversalType)
     displayTreeWorker(root, 0, traversalType);
 }
 
-template<typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node *node, TraversalType traversalType)
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node* node, TraversalType traversalType)
 {
     if (isLeaf(node)) return;
 
@@ -155,8 +209,8 @@ void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node *node,
     if (traversalType == TraversalType::POST_ORDER) std::cout << node->key << " " << node->item << std::endl;
 }
 
-template<typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayTreeStructure(Dictionary::Node *node, int depth) {
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayTreeStructure(Dictionary::Node* node, int depth) {
     for (int i = 0; i < depth; i++) { std::cout << "- "; }
     std::cout << node->key << " " << node->item << std::endl;
     if (isLeaf(node->left) && isLeaf(node->right))
@@ -166,8 +220,8 @@ void Dictionary<KeyType, ItemType>::displayTreeStructure(Dictionary::Node *node,
     }
 }
 
-template<typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayTreeWorker(Dictionary::Node *node, int depth, TraversalType traversalType)
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayTreeWorker(Dictionary::Node* node, int depth, TraversalType traversalType)
 {
     if (isLeaf(node)) return;
 
