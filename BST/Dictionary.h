@@ -4,6 +4,13 @@
 #include <iostream>
 #include <utility>
 
+enum class TraversalType
+{
+    PRE_ORDER,
+    IN_ORDER,
+    POST_ORDER
+};
+
 template <typename KeyType, typename ItemType>
 class Dictionary
 {
@@ -16,12 +23,17 @@ public:
 
     void insert(KeyType key, const ItemType& item);
     ItemType* lookup(KeyType key);
+    void displayEntries(TraversalType traversalType = TraversalType::IN_ORDER);
+    void displayTree(TraversalType traversalType = TraversalType::IN_ORDER);
 
 private:
     struct Node;
     Node* root = nullptr;
     KeyType size = 0;
 
+    void displayEntriesWorker(Node *node, TraversalType traversalType);
+    void displayTreeStructure(Node* node, int depth);
+    void displayTreeWorker(Node *node, int depth, TraversalType traversalType);
     static bool isLeaf(Node* node)
     {
         return node == nullptr;
@@ -113,6 +125,61 @@ ItemType* Dictionary<KeyType, ItemType>::lookup(KeyType key)
         }
     }
     return nullptr;
+}
+
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayEntries(TraversalType traversalType)
+{
+    displayEntriesWorker(root, traversalType);
+}
+
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayTree(TraversalType traversalType)
+{
+    displayTreeWorker(root, 0, traversalType);
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node *node, TraversalType traversalType)
+{
+    if (isLeaf(node)) return;
+
+    if (traversalType == TraversalType::PRE_ORDER) std::cout << node->key << " " << node->item << std::endl;
+
+    displayEntriesWorker(node->left, TraversalType::PRE_ORDER);
+
+    if (traversalType == TraversalType::IN_ORDER) std::cout << node->key << " " << node->item << std::endl;
+
+    displayEntriesWorker(node->right, TraversalType::PRE_ORDER);
+
+    if (traversalType == TraversalType::POST_ORDER) std::cout << node->key << " " << node->item << std::endl;
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayTreeStructure(Dictionary::Node *node, int depth) {
+    for (int i = 0; i < depth; i++) { std::cout << "- "; }
+    std::cout << node->key << " " << node->item << std::endl;
+    if (isLeaf(node->left) && isLeaf(node->right))
+    {
+        for (int i = 0; i < depth; i++) { std::cout << "- "; }
+        std::cout << "*" << std::endl;
+    }
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayTreeWorker(Dictionary::Node *node, int depth, TraversalType traversalType)
+{
+    if (isLeaf(node)) return;
+
+    if (traversalType == TraversalType::PRE_ORDER) displayTreeStructure(node, depth);
+
+    displayTreeWorker(node->right, depth + 1, TraversalType::PRE_ORDER);
+
+    if (traversalType == TraversalType::IN_ORDER) displayTreeStructure(node, depth);
+
+    displayTreeWorker(node->left, depth + 1, TraversalType::PRE_ORDER);
+
+    if (traversalType == TraversalType::POST_ORDER) displayTreeStructure(node, depth);
 }
 
 #endif //ASE_SOLUTIONS_DICTIONARY_H

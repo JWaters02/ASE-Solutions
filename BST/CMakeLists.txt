@@ -1,4 +1,4 @@
-project(Week2Solutions)
+project(BST_Solutions)
 
 include(FetchContent)
 include(GoogleTest)
@@ -11,7 +11,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(Week2Solutions
+add_executable(BST_Solutions
         main.cpp
         Dictionary.h)
 
