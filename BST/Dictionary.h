@@ -23,13 +23,15 @@ public:
     {
         root = deepCopyWorker(copy.root);
     };
-    ~Dictionary()
+    /*~Dictionary()
     {
         deepDeleteWorker(root);
-    }
+    }*/
 
     void insert(KeyType key, const ItemType& item);
+    void insertIterative(KeyType key, const ItemType& item);
     ItemType* lookup(KeyType key);
+    ItemType* lookupIterative(KeyType key);
     void remove(KeyType key);
     void displayEntries(std::ostream& stream = std::cout, TraversalType traversalType = TraversalType::IN_ORDER);
     void displayTree(std::ostream& stream = std::cout, TraversalType traversalType = TraversalType::IN_ORDER);
@@ -90,7 +92,23 @@ template <typename KeyType, typename ItemType>
 void Dictionary<KeyType, ItemType>::insert(KeyType key, const ItemType& item)
 {
     insertWorker(key, item, root);
-    /*if (isLeaf(root))
+}
+
+template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::insertWorker(KeyType key, const ItemType& item, Dictionary::Node*& node)
+{
+    if (isLeaf(node)) node = new Node(key, item);
+    else {
+        if (node->key == key) node->item = item;
+        else if (node->key > key) insertWorker(key, item, node->right);
+        else if (node->key < key) insertWorker(key, item, node->left);
+    }
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::insertIterative(KeyType key, const ItemType &item)
+{
+    if (isLeaf(root))
     {
         root = new Node(key, item);
     }
@@ -130,17 +148,6 @@ void Dictionary<KeyType, ItemType>::insert(KeyType key, const ItemType& item)
                 }
             }
         }
-    }*/
-}
-
-template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::insertWorker(KeyType key, const ItemType& item, Dictionary::Node*& node)
-{
-    if (isLeaf(node)) node = new Node(key, item);
-    else {
-        if (node->key == key) node->item = item;
-        else if (node->key > key) insertWorker(key, item, node->right);
-        else if (node->key < key) insertWorker(key, item, node->left);
     }
 }
 
@@ -148,7 +155,24 @@ template <typename KeyType, typename ItemType>
 ItemType* Dictionary<KeyType, ItemType>::lookup(KeyType key)
 {
     return lookupWorker(key, root);
-    /*Node* current = root;
+}
+
+template <typename KeyType, typename ItemType>
+ItemType* Dictionary<KeyType, ItemType>::lookupWorker(KeyType key, Dictionary::Node* node)
+{
+    if (isLeaf(node)) return nullptr;
+
+    if (node->key == key) return &node->item;
+    if (node->key > key && !isLeaf(node->right)) return lookupWorker(key, node->right);
+    if (node->key < key && !isLeaf(node->left)) return lookupWorker(key, node->left);
+
+    return nullptr;
+}
+
+template<typename KeyType, typename ItemType>
+ItemType *Dictionary<KeyType, ItemType>::lookupIterative(KeyType key)
+{
+    Node* current = root;
     while (!isLeaf(current))
     {
         if (current->key == key)
@@ -164,18 +188,6 @@ ItemType* Dictionary<KeyType, ItemType>::lookup(KeyType key)
             current = current->left;
         }
     }
-    return nullptr;*/
-}
-
-template <typename KeyType, typename ItemType>
-ItemType* Dictionary<KeyType, ItemType>::lookupWorker(KeyType key, Dictionary::Node* node)
-{
-    if (isLeaf(node)) return nullptr;
-
-    if (node->key == key) return &node->item;
-    if (node->key > key && !isLeaf(node->right)) return lookupWorker(key, node->right);
-    if (node->key < key && !isLeaf(node->left)) return lookupWorker(key, node->left);
-
     return nullptr;
 }
 

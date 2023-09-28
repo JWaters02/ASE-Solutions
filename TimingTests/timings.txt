@@ -1,0 +1,7 @@
+     size  mapTime  unorderedMapTime  bstTime  consecutiveMapTime  consecutiveUnorderedMapTime  consecutiveBstTime
+0       1      389               373      146                 253                          214                   9
+1      10      440               324      167                 384                          191                  57
+2     100      541               347      222                 454                          231                 569
+3    1000      736               411      355                 539                          224                6169
+4   10000      966               333      581                 718                          260               79804
+5  100000     1520               443     1712                 575                          253             3156805
