@@ -37,6 +37,16 @@ void insertTestData(Dictionary<int, std::string>& dict)
     dict.insert(26, "Charles");
 }
 
+void accessLeftRotator(Dictionary<int, std::string>& dictionary)
+{
+    dictionary.rotateLeft(dictionary.root);
+}
+
+void accessRightRotator(Dictionary<int, std::string>& dictionary)
+{
+    dictionary.rotateRight(dictionary.root);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 TEST(Lookup_Insert_Tests, EmptyLookup)
@@ -379,15 +389,113 @@ TEST(Copy_Constructor_Tests, CopyConstructorIsDeep)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST(Display_Entries_Test, String_Stream_Check)
+TEST(Display_Entries_Test, StringStreamCheck)
 {
     Dictionary<int, std::string> dict;
     dict.insert(22,"Jane");
     dict.insert(4,"Mary");
 
-    std::stringstream ss;
-    dict.displayEntries(ss);
+    std::stringstream actualOutputStream;
+    dict.displayEntries(actualOutputStream);
 
-    std::string expected = "22 Jane\n4 Mary\n";
-    ASSERT_EQ(ss.str(), expected);
+    std::stringstream expectedOutputStream;
+    expectedOutputStream << "22 Jane"        << std::endl;
+    expectedOutputStream << "4 Mary"         << std::endl;
+    ASSERT_EQ(actualOutputStream.str(), expectedOutputStream.str());
+}
+
+TEST(Display_Entries_Test, DisplayDoesNotIncludeOverwrittenItems)
+{
+    Dictionary<int, std::string> dict;
+    dict.insert(22,"Mary");
+    dict.insert(-12,"Aelfwynn");
+    dict.insert(-12,"Aethelstan");
+    dict.insert(31,"Anne");
+
+    std::stringstream expectedOutputStream;
+    expectedOutputStream << "31 Anne"        << std::endl;
+    expectedOutputStream << "22 Mary"        << std::endl;
+    expectedOutputStream << "-12 Aethelstan" << std::endl;
+
+    std::stringstream actualOutputStream;
+    dict.displayEntries(actualOutputStream);
+
+    ASSERT_EQ(expectedOutputStream.str(), actualOutputStream.str());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST(Rotate_Tests, LeftRotator)
+{
+    Dictionary<int, std::string> dict;
+    insertTestData(dict);
+
+    accessLeftRotator(dict);
+
+    std::stringstream actualOutputStream;
+    dict.displayEntries(actualOutputStream);
+
+    std::stringstream expectedOutputStream;
+    expectedOutputStream << "22 Mary"        << std::endl;
+    expectedOutputStream << "37 Victoria"    << std::endl;
+    expectedOutputStream << "42 Elizabeth"   << std::endl;
+    expectedOutputStream << "26 Charles"     << std::endl;
+    expectedOutputStream << "31 Anne"        << std::endl;
+    expectedOutputStream << "24 James"       << std::endl;
+    expectedOutputStream << "23 Elizabeth"   << std::endl;
+    expectedOutputStream << "9 Edward"       << std::endl;
+    expectedOutputStream << "19 Henry"       << std::endl;
+    expectedOutputStream << "4 Stephen"      << std::endl;
+    expectedOutputStream << "1 William"      << std::endl;
+    expectedOutputStream << "0 Harold"       << std::endl;
+    expectedOutputStream << "-1 Edward"      << std::endl;
+
+    ASSERT_EQ(actualOutputStream.str(), expectedOutputStream.str());
+}
+
+TEST(Rotate_Tests, RightRotator)
+{
+    Dictionary<int, std::string> dict;
+    insertTestData(dict);
+
+    accessRightRotator(dict);
+
+    std::stringstream actualOutputStream;
+    dict.displayEntries(actualOutputStream);
+
+    std::stringstream expectedOutputStream;
+    expectedOutputStream << "42 Elizabeth"   << std::endl;
+    expectedOutputStream << "37 Victoria"    << std::endl;
+    expectedOutputStream << "22 Mary"        << std::endl;
+    expectedOutputStream << "26 Charles"     << std::endl;
+    expectedOutputStream << "31 Anne"        << std::endl;
+    expectedOutputStream << "24 James"       << std::endl;
+    expectedOutputStream << "23 Elizabeth"   << std::endl;
+    expectedOutputStream << "0 Harold"       << std::endl;
+    expectedOutputStream << "9 Edward"       << std::endl;
+    expectedOutputStream << "19 Henry"       << std::endl;
+    expectedOutputStream << "4 Stephen"      << std::endl;
+    expectedOutputStream << "1 William"      << std::endl;
+    expectedOutputStream << "-1 Edward"      << std::endl;
+
+    ASSERT_EQ(actualOutputStream.str(), expectedOutputStream.str());
+}
+
+TEST(Rotate_Tests, LeftThenRightRotator)
+{
+    Dictionary<int, std::string> dict;
+    insertTestData(dict);
+
+    Dictionary<int, std::string> dict2(dict);
+
+    accessLeftRotator(dict);
+    accessRightRotator(dict);
+
+    std::stringstream actualOutputStream;
+    dict.displayEntries(actualOutputStream);
+
+    std::stringstream ss2;
+    dict2.displayEntries(ss2);
+
+    ASSERT_EQ(actualOutputStream.str(), ss2.str());
 }

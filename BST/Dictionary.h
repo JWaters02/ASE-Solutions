@@ -41,12 +41,18 @@ private:
     void insertWorker(KeyType key, const ItemType& item, Dictionary::Node*& node = nullptr);
     ItemType* lookupWorker(KeyType key, Node* node = nullptr);
     void removeWorker(KeyType key, Node*& node = nullptr);
+    void rotateLeft(Dictionary::Node *&A);
+    void rotateRight(Dictionary::Node *&B);
     void deepDeleteWorker(Node* node);
     Node* deepCopyWorker(Node* node);
     void displayEntriesWorker(Node* node, std::ostream& stream, TraversalType traversalType);
     void displayTreeStructure(Dictionary::Node *node, int depth, std::ostream &stream);
     void displayTreeWorker(Dictionary::Node *node, int depth, std::ostream &stream,
                            TraversalType traversalType);
+
+    friend void accessLeftRotator(Dictionary<KeyType, ItemType>& dictionary);
+    friend void accessRightRotator(Dictionary<KeyType, ItemType>& dictionary);
+
     static bool isLeaf(Node* node)
     {
         return node == nullptr;
@@ -195,6 +201,28 @@ void Dictionary<KeyType, ItemType>::removeWorker(KeyType key, Dictionary::Node*&
     }
     else if (node->key > key) removeWorker(key, node->right);
     else if (node->key < key) removeWorker(key, node->left);
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::rotateRight(Dictionary::Node *&B)
+{
+    if (isLeaf(B)) return;
+
+    Node* beta = B->left;
+    B->left = beta->right;
+    beta->right = B;
+    B = beta;
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::rotateLeft(Dictionary::Node *&A)
+{
+    if (isLeaf(A)) return;
+
+    Node* beta = A->right;
+    A->right = beta->left;
+    beta->left = A;
+    A = beta;
 }
 
 template<typename KeyType, typename ItemType>
