@@ -5,5 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(Week1)
 add_subdirectory(BST)
+add_subdirectory(TimingTests)
 
 add_executable(ASE_Solutions main.cpp)
