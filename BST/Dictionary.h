@@ -41,8 +41,16 @@ private:
     void insertWorker(KeyType key, const ItemType& item, Dictionary::Node*& node = nullptr);
     ItemType* lookupWorker(KeyType key, Node* node = nullptr);
     void removeWorker(KeyType key, Node*& node = nullptr);
+
+    /* Tree rotations
+     * Pre-conditions:
+     * 1. The node is not a leaf - i.e. is an internal node.
+     * 2. For rotateRight - The left node has a right child.
+     *    For rotateLeft  - The right node has a left child.
+    */
     void rotateLeft(Dictionary::Node *&A);
     void rotateRight(Dictionary::Node *&B);
+
     void deepDeleteWorker(Node* node);
     Node* deepCopyWorker(Node* node);
     void displayEntriesWorker(Node* node, std::ostream& stream, TraversalType traversalType);
@@ -206,10 +214,14 @@ void Dictionary<KeyType, ItemType>::removeWorker(KeyType key, Dictionary::Node*&
 template<typename KeyType, typename ItemType>
 void Dictionary<KeyType, ItemType>::rotateRight(Dictionary::Node *&B)
 {
-    if (isLeaf(B)) return;
+    assert(isLeaf(B) == false);
 
+    assert(B->left);
     Node* beta = B->left;
+
+    assert(beta->right);
     B->left = beta->right;
+
     beta->right = B;
     B = beta;
 }
@@ -217,10 +229,14 @@ void Dictionary<KeyType, ItemType>::rotateRight(Dictionary::Node *&B)
 template<typename KeyType, typename ItemType>
 void Dictionary<KeyType, ItemType>::rotateLeft(Dictionary::Node *&A)
 {
-    if (isLeaf(A)) return;
+    assert(isLeaf(A) == false);
 
+    assert(A->right);
     Node* beta = A->right;
+
+    assert(beta->left);
     A->right = beta->left;
+
     beta->left = A;
     A = beta;
 }
