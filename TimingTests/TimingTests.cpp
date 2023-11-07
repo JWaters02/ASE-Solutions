@@ -93,7 +93,7 @@ void iterateTests()
         times_bst.push_back(timingTest(mapSize, numberOfLookups, Dictionary<int, std::string>()));
         times_map_consecutive.push_back(timingTest(mapSize, numberOfLookups, std::map<int, std::string>(), true));
         times_unordered_map_consecutive.push_back(timingTest(mapSize, numberOfLookups, std::unordered_map<int, std::string>(), true));
-        times_bst_consecutive.push_back(timingTest(mapSize, numberOfLookups, Dictionary<int, std::string>(), true));
+        //times_bst_consecutive.push_back(timingTest(mapSize, numberOfLookups, Dictionary<int, std::string>(), true));
     }
 
     std::ofstream file;
@@ -107,7 +107,7 @@ void iterateTests()
             << "," << times_bst[i].count()
             << "," << times_map_consecutive[i].count()
             << "," << times_unordered_map_consecutive[i].count()
-            << "," << times_bst_consecutive[i].count()
+            //<< "," << times_bst_consecutive[i].count()
             << "\n";
     }
     file.close();

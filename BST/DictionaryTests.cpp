@@ -499,3 +499,365 @@ TEST(Rotate_Tests, LeftThenRightRotator)
 
     ASSERT_EQ(actualOutputStream.str(), ss2.str());
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST(Move_Constructor_Tests, MoveConstructorFullyMoves)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2(std::move(dict1));
+
+    isPresent(dict2,22,"Mary");
+    isPresent(dict2,4,"Stephen");
+    isPresent(dict2,9,"Edward");
+    isPresent(dict2,1,"William");
+    isPresent(dict2,0,"Harold");
+    isPresent(dict2,24,"James");
+    isPresent(dict2,26,"Charles");
+    isPresent(dict2,19,"Henry");
+    isPresent(dict2,31,"Anne");
+    isPresent(dict2,23,"Elizabeth");
+    isPresent(dict2,37,"Victoria");
+    isPresent(dict2,42,"Elizabeth");
+    isPresent(dict2,-1,"Edward");
+}
+
+TEST(Move_Constructor_Tests, MoveConstructorSteals)
+{
+    Dictionary<int, std::string>* dictPtr;
+    {
+        Dictionary<int, std::string> dict1;
+        insertTestData(dict1);
+
+        dictPtr = new Dictionary(std::move(dict1));
+
+        isAbsent(dict1,22);
+        isAbsent(dict1,4);
+        isAbsent(dict1,9);
+        isAbsent(dict1,1);
+        isAbsent(dict1,0);
+        isAbsent(dict1,24);
+        isAbsent(dict1,26);
+        isAbsent(dict1,19);
+        isAbsent(dict1,31);
+        isAbsent(dict1,23);
+        isAbsent(dict1,37);
+        isAbsent(dict1,42);
+        isAbsent(dict1,-1);
+
+        // dict1 gets deleted here
+    }
+
+    isPresent(*dictPtr,22,"Mary");
+    isPresent(*dictPtr,4,"Stephen");
+    isPresent(*dictPtr,9,"Edward");
+    isPresent(*dictPtr,1,"William");
+    isPresent(*dictPtr,0,"Harold");
+    isPresent(*dictPtr,24,"James");
+    isPresent(*dictPtr,26,"Charles");
+    isPresent(*dictPtr,19,"Henry");
+    isPresent(*dictPtr,31,"Anne");
+    isPresent(*dictPtr,23,"Elizabeth");
+    isPresent(*dictPtr,37,"Victoria");
+    isPresent(*dictPtr,42,"Elizabeth");
+    isPresent(*dictPtr,-1,"Edward");
+
+    delete dictPtr;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST(Copy_Assignment_Tests, CopyAssignmentFullyCopies)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2;
+    dict2 = dict1;
+
+    isPresent(dict2,22,"Mary");
+    isPresent(dict2,4,"Stephen");
+    isPresent(dict2,9,"Edward");
+    isPresent(dict2,1,"William");
+    isPresent(dict2,0,"Harold");
+    isPresent(dict2,24,"James");
+    isPresent(dict2,26,"Charles");
+    isPresent(dict2,19,"Henry");
+    isPresent(dict2,31,"Anne");
+    isPresent(dict2,23,"Elizabeth");
+    isPresent(dict2,37,"Victoria");
+    isPresent(dict2,42,"Elizabeth");
+    isPresent(dict2,-1,"Edward");
+}
+
+TEST(Copy_Assignment_Tests, CopyAssignmentOverwrites)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2;
+    dict2.insert(22,"Jane");
+    dict2.insert(2,"William");
+
+    dict1 = dict2;
+
+    isAbsent(dict1,4);
+    isAbsent(dict1,9);
+    isAbsent(dict1,1);
+    isAbsent(dict1,0);
+    isAbsent(dict1,24);
+    isAbsent(dict1,26);
+    isAbsent(dict1,19);
+    isAbsent(dict1,31);
+    isAbsent(dict1,23);
+    isAbsent(dict1,37);
+    isAbsent(dict1,42);
+    isAbsent(dict1,-1);
+
+    isPresent(dict1,2,"William");
+    isPresent(dict1,22,"Jane");
+}
+
+TEST(Copy_Assignment_Tests, CopyAssignmentDoesNotReverseCopy)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2;
+
+    dict2.insert(22,"Jane");
+    dict2.insert(2,"William");
+
+    dict2 = dict1;
+
+    isAbsent(dict1,2);
+}
+
+TEST(Copy_Assignment_Tests, CopyAssignmentIsDeep)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2;
+    dict2 = dict1;
+
+    dict1.insert(2,"William");
+    isPresent(dict1,2,"William");
+    isAbsent(dict2,2);
+
+    dict2.insert(3,"Henry");
+    isPresent(dict2,3,"Henry");
+    isAbsent(dict1,3);
+
+    dict1.remove(24);
+    isAbsent(dict1,24);
+    isPresent(dict2,24,"James");
+
+    dict2.remove(26);
+    isAbsent(dict2,26);
+    isPresent(dict1,26,"Charles");
+}
+
+TEST(Copy_Assignment_Tests, CopySelfAssignment)
+{
+    Dictionary<int, std::string> dict;
+    insertTestData(dict);
+
+    dict = dict;
+    isPresent(dict,24,"James");
+    isPresent(dict,26,"Charles");
+    isAbsent(dict,2);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST(Move_Assignment_Tests, MoveAssignmentFullyMoves)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2;
+    dict2 = std::move(dict1);
+
+    isPresent(dict2,22,"Mary");
+    isPresent(dict2,4,"Stephen");
+    isPresent(dict2,9,"Edward");
+    isPresent(dict2,1,"William");
+    isPresent(dict2,0,"Harold");
+    isPresent(dict2,24,"James");
+    isPresent(dict2,26,"Charles");
+    isPresent(dict2,19,"Henry");
+    isPresent(dict2,31,"Anne");
+    isPresent(dict2,23,"Elizabeth");
+    isPresent(dict2,37,"Victoria");
+    isPresent(dict2,42,"Elizabeth");
+    isPresent(dict2,-1,"Edward");
+}
+
+TEST(Move_Assignment_Tests, MoveAssignmentSteals)
+{
+    Dictionary<int, std::string> dict1, dict2;
+    insertTestData(dict1);
+
+    dict2 = std::move(dict1);
+
+    isAbsent(dict1,22);
+    isAbsent(dict1,4);
+    isAbsent(dict1,9);
+    isAbsent(dict1,1);
+    isAbsent(dict1,0);
+    isAbsent(dict1,24);
+    isAbsent(dict1,26);
+    isAbsent(dict1,19);
+    isAbsent(dict1,31);
+    isAbsent(dict1,23);
+    isAbsent(dict1,37);
+    isAbsent(dict1,42);
+    isAbsent(dict1,-1);
+}
+
+TEST(Move_Assignment_Tests, MoveAssignmentOverwrites)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2;
+    dict2.insert(22,"Jane");
+    dict2.insert(2,"William");
+
+    dict1 = std::move(dict2);
+
+    isAbsent(dict1,4);
+    isAbsent(dict1,9);
+    isAbsent(dict1,1);
+    isAbsent(dict1,0);
+    isAbsent(dict1,24);
+    isAbsent(dict1,26);
+    isAbsent(dict1,19);
+    isAbsent(dict1,31);
+    isAbsent(dict1,23);
+    isAbsent(dict1,37);
+    isAbsent(dict1,42);
+    isAbsent(dict1,-1);
+
+    isPresent(dict1,2,"William");
+}
+
+TEST(Move_Assignment_Tests, MoveAssignmentIsNotShallowCopy)
+{
+    Dictionary<int, std::string> dict1;
+    insertTestData(dict1);
+
+    Dictionary<int, std::string> dict2;
+    dict2 = std::move(dict1);
+
+    dict1.remove(19);
+    dict1.remove(23);
+    isPresent(dict2,19,"Henry");
+    isPresent(dict2,23,"Elizabeth");
+}
+
+TEST(Move_Assignment_Tests, MoveSelfAssignment)
+{
+    Dictionary<int, std::string> dict;
+    insertTestData(dict);
+
+    dict = std::move(dict);
+
+    isPresent(dict,24,"James");
+    isPresent(dict,26,"Charles");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST(Template_Tests, String_Keys)
+{
+    Dictionary<std::string, double> dict;
+
+    dict.insert("Mercury",2439.7);
+    dict.insert("Venus",6051.8);
+    dict.insert("Mars",3389.5);
+    dict.insert("Pluto",1188.3);
+
+    double* marsRadiusPtr = dict.lookup("Mars");
+    assert(marsRadiusPtr != nullptr);
+    ASSERT_NEAR(*marsRadiusPtr,3390,1);
+
+    assert(dict.lookup("Minerva") == nullptr);
+
+    dict.remove("Pluto");
+    assert(dict.lookup("Pluto") == nullptr);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+TEST(RemoveIf_Tests, RemoveNone)
+{
+    Dictionary<int, std::string> dict;
+    insertTestData(dict);
+
+    dict.removeIf([](int k) {return false;});
+
+    isPresent(dict,22,"Mary");
+    isPresent(dict,4,"Stephen");
+    isPresent(dict,9,"Edward");
+    isPresent(dict,1,"William");
+    isPresent(dict,0,"Harold");
+    isPresent(dict,24,"James");
+    isPresent(dict,26,"Charles");
+    isPresent(dict,19,"Henry");
+    isPresent(dict,31,"Anne");
+    isPresent(dict,23,"Elizabeth");
+    isPresent(dict,37,"Victoria");
+    isPresent(dict,42,"Elizabeth");
+    isPresent(dict,-1,"Edward");
+}
+
+TEST(RemoveIf_Tests, RemoveAll)
+{
+    Dictionary<int, std::string> dict;
+    insertTestData(dict);
+
+    dict.removeIf([](int k) {return true;});
+
+    isAbsent(dict,22);
+    isAbsent(dict,4);
+    isAbsent(dict,9);
+    isAbsent(dict,1);
+    isAbsent(dict,0);
+    isAbsent(dict,24);
+    isAbsent(dict,26);
+    isAbsent(dict,19);
+    isAbsent(dict,31);
+    isAbsent(dict,23);
+    isAbsent(dict,37);
+    isAbsent(dict,42);
+    isAbsent(dict,-1);
+}
+
+TEST(RemoveIf_Tests, RemoveOddKeys)
+{
+    Dictionary<int, std::string> dict;
+    insertTestData(dict);
+
+    dict.removeIf([](int k) {return k%2 != 0;});
+
+    isPresent(dict,22,"Mary");
+    isPresent(dict,4,"Stephen");
+    isPresent(dict,0,"Harold");
+    isPresent(dict,24,"James");
+    isPresent(dict,26,"Charles");
+    isPresent(dict,42,"Elizabeth");
+
+    isAbsent(dict,9);
+    isAbsent(dict,1);
+    isAbsent(dict,19);
+    isAbsent(dict,31);
+    isAbsent(dict,23);
+    isAbsent(dict,37);
+    isAbsent(dict,-1);
+}
+
+////////////////////////////////////////////////////////////////////////////////

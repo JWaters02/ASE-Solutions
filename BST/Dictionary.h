@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <utility>
+#include <functional>
 
 enum class TraversalType
 {
@@ -15,24 +16,60 @@ template <typename KeyType, typename ItemType>
 class Dictionary
 {
 public:
+    // Constructor
     Dictionary()
     {
         root = nullptr;
     }
-    Dictionary(const Dictionary& copy)
-    {
-        root = deepCopyWorker(copy.root);
-    };
-    /*~Dictionary()
+
+    // Destructor
+    ~Dictionary()
     {
         deepDeleteWorker(root);
-    }*/
+    }
+
+    // Copy constructor
+    Dictionary(const Dictionary& source)
+    {
+        root = deepCopyWorker(source.root);
+    }
+
+    // Move constructor
+    Dictionary(Dictionary&& source)
+    {
+        root = source.root;
+        source.root = nullptr;
+    }
+
+    // Copy assignment
+    Dictionary& operator=(const Dictionary& source)
+    {
+        if (this != &source)
+        {
+            deepDeleteWorker(root);
+            root = deepCopyWorker(source.root);
+        }
+        return *this;
+    }
+
+    // Move assignment
+    Dictionary& operator=(Dictionary&& source)
+    {
+        if (this != &source)
+        {
+            deepDeleteWorker(root);
+            root = source.root;
+            source.root = nullptr;
+        }
+        return *this;
+    }
 
     void insert(KeyType key, const ItemType& item);
     void insertIterative(KeyType key, const ItemType& item);
     ItemType* lookup(KeyType key);
     ItemType* lookupIterative(KeyType key);
     void remove(KeyType key);
+    void removeIf(std::function<bool(KeyType)>);
     void displayEntries(std::ostream& stream = std::cout, TraversalType traversalType = TraversalType::IN_ORDER);
     void displayTree(std::ostream& stream = std::cout, TraversalType traversalType = TraversalType::IN_ORDER);
 
@@ -43,6 +80,7 @@ private:
     void insertWorker(KeyType key, const ItemType& item, Dictionary::Node*& node = nullptr);
     ItemType* lookupWorker(KeyType key, Node* node = nullptr);
     void removeWorker(KeyType key, Node*& node = nullptr);
+    void removeIfWorker(std::function<bool(KeyType)> predicate, Node*& node = nullptr);
 
     /* Tree rotations
      * Pre-conditions:
@@ -50,14 +88,14 @@ private:
      * 2. For rotateRight - The left node has a right child.
      *    For rotateLeft  - The right node has a left child.
     */
-    void rotateLeft(Dictionary::Node *&A);
-    void rotateRight(Dictionary::Node *&B);
+    void rotateLeft(Dictionary::Node*& A);
+    void rotateRight(Dictionary::Node*& B);
 
     void deepDeleteWorker(Node* node);
     Node* deepCopyWorker(Node* node);
     void displayEntriesWorker(Node* node, std::ostream& stream, TraversalType traversalType);
-    void displayTreeStructure(Dictionary::Node *node, int depth, std::ostream &stream);
-    void displayTreeWorker(Dictionary::Node *node, int depth, std::ostream &stream,
+    void displayTreeStructure(Dictionary::Node* node, int depth, std::ostream& stream);
+    void displayTreeWorker(Dictionary::Node* node, int depth, std::ostream& stream,
                            TraversalType traversalType);
 
     friend void accessLeftRotator(Dictionary<KeyType, ItemType>& dictionary);
@@ -224,6 +262,26 @@ void Dictionary<KeyType, ItemType>::removeWorker(KeyType key, Dictionary::Node*&
 }
 
 template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::removeIf(std::function<bool(KeyType)> predicate)
+{
+    removeIfWorker(predicate, root);
+}
+
+template<typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::removeIfWorker(std::function<bool(KeyType)> predicate, Node*& node)
+{
+    if (isLeaf(node)) return;
+
+    removeIfWorker(predicate, node->left);
+    removeIfWorker(predicate, node->right);
+
+    if (predicate(node->key))
+    {
+        removeWorker(node->key, node);
+    }
+}
+
+template<typename KeyType, typename ItemType>
 void Dictionary<KeyType, ItemType>::rotateRight(Dictionary::Node *&B)
 {
     assert(isLeaf(B) == false);
@@ -287,19 +345,13 @@ void Dictionary<KeyType, ItemType>::displayEntriesWorker(Dictionary::Node* node,
 
     if (traversalType == TraversalType::PRE_ORDER) stream << node->key << " " << node->item << std::endl;
 
-    displayEntriesWorker(node->left, stream, TraversalType::PRE_ORDER);
+    displayEntriesWorker(node->left, stream, traversalType);
 
     if (traversalType == TraversalType::IN_ORDER) stream << node->key << " " << node->item << std::endl;
 
-    displayEntriesWorker(node->right, stream, TraversalType::PRE_ORDER);
+    displayEntriesWorker(node->right, stream, traversalType);
 
     if (traversalType == TraversalType::POST_ORDER) stream << node->key << " " << node->item << std::endl;
-}
-
-template <typename KeyType, typename ItemType>
-void Dictionary<KeyType, ItemType>::displayTree(std::ostream& stream, TraversalType traversalType)
-{
-    displayTreeWorker(root, 0, stream, traversalType);
 }
 
 template <typename KeyType, typename ItemType>
@@ -314,6 +366,12 @@ void Dictionary<KeyType, ItemType>::displayTreeStructure(Dictionary::Node* node,
 }
 
 template <typename KeyType, typename ItemType>
+void Dictionary<KeyType, ItemType>::displayTree(std::ostream& stream, TraversalType traversalType)
+{
+    displayTreeWorker(root, 0, stream, traversalType);
+}
+
+template <typename KeyType, typename ItemType>
 void Dictionary<KeyType, ItemType>::displayTreeWorker(Dictionary::Node* node, int depth, std::ostream& stream,
                                                       TraversalType traversalType)
 {
@@ -321,11 +379,11 @@ void Dictionary<KeyType, ItemType>::displayTreeWorker(Dictionary::Node* node, in
 
     if (traversalType == TraversalType::PRE_ORDER) displayTreeStructure(node, depth, stream);
 
-    displayTreeWorker(node->right, depth + 1, stream, TraversalType::PRE_ORDER);
+    displayTreeWorker(node->right, depth + 1, stream, traversalType);
 
     if (traversalType == TraversalType::IN_ORDER) displayTreeStructure(node, depth, stream);
 
-    displayTreeWorker(node->left, depth + 1, stream, TraversalType::PRE_ORDER);
+    displayTreeWorker(node->left, depth + 1, stream, traversalType);
 
     if (traversalType == TraversalType::POST_ORDER) displayTreeStructure(node, depth, stream);
 }
