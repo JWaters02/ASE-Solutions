@@ -1,0 +1,8 @@
+semicircle:diamond
+star:cross
+cross:semicircle
+circle:hexagon
+ring:square
+hexagon:star
+diamond:ring
+triangle:circle
