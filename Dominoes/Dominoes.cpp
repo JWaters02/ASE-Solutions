@@ -1,6 +1,6 @@
 #include "Dominoes.h"
 
-Dominoes::Dominoes(const DominoNode &startingDomino, const std::list<DominoNode> &inputDominoes) {
+Dominoes::Dominoes(const DominoNode& startingDomino, const std::list<DominoNode> &inputDominoes) {
     head = new DominoNode(startingDomino.leftSymbol, startingDomino.rightSymbol);
     tail = head;
 
@@ -18,7 +18,8 @@ Dominoes::Dominoes(const DominoNode &startingDomino, const std::list<DominoNode>
         }
     }
 
-    this->inputDominoes = inputDominoes;
+    placedDominoes = 1;
+    totalDominoes = inputDominoes.size() + 1;
 }
 
 Dominoes::~Dominoes() {
@@ -32,18 +33,75 @@ Dominoes::~Dominoes() {
     tail = nullptr;
 }
 
-DominoNode Dominoes::addLeftDomino() {
-    return DominoNode{nullptr, nullptr};
+DominoNode* Dominoes::addLeftDomino() {
+    if (head == nullptr) {
+        throw std::logic_error("No starting domino in the line");
+    }
+
+    std::string matchingSymbol = head->leftSymbol;
+    DominoNode* matchingNode = dominoLine[matchingSymbol];
+
+    // If there is a matching domino that is not already in the line
+    if (matchingNode != nullptr && !matchingNode->isPlaced) {
+        DominoNode* newNode = new DominoNode(matchingNode->leftSymbol, matchingNode->rightSymbol);
+
+        // Shift the current head to the right and assign the new node as the new head
+        newNode->next = head;
+        head->prev = newNode;
+        head = newNode;
+        newNode->isPlaced = true;
+
+        dominoLine[newNode->leftSymbol] = newNode;
+        dominoLine[newNode->rightSymbol] = newNode;
+
+        return newNode;
+    } else {
+        return nullptr;
+    }
 }
 
-DominoNode Dominoes::addRightDomino() {
-    return DominoNode{nullptr, nullptr};
+DominoNode* Dominoes::addRightDomino() {
+    if (tail == nullptr) {
+        throw std::logic_error("No starting domino in the line");
+    }
+
+    std::string matchingSymbol = tail->rightSymbol;
+    DominoNode* matchingNode = dominoLine[matchingSymbol];
+
+    // If there is a matching domino that is not already in the line
+    if (matchingNode != nullptr && !matchingNode->isPlaced) {
+        DominoNode* newNode = new DominoNode(matchingNode->leftSymbol, matchingNode->rightSymbol);
+
+        // Shift the current tail to the left and assign the new node as the new tail
+        newNode->prev = tail;
+        tail->next = newNode;
+        tail = newNode;
+        newNode->isPlaced = true;
+
+        dominoLine[newNode->leftSymbol] = newNode;
+        dominoLine[newNode->rightSymbol] = newNode;
+
+        return newNode;
+    } else {
+        return nullptr;
+    }
 }
 
-bool Dominoes::checkLineCompleted() {
-    return false;
+bool Dominoes::checkLineCompleted() const {
+    return placedDominoes == totalDominoes;
 }
 
 void Dominoes::displayDominoLine() {
+    DominoNode* current = head;
+    std::string line;
 
+    while (current != nullptr) {
+        line += current->leftSymbol + ":" + current->rightSymbol;
+        current = current->next;
+        if (current != nullptr) {
+            line += " ";
+        }
+    }
+
+    std::cout << line << std::endl;
 }

@@ -10,8 +10,8 @@ void createDominoLine(Dominoes& dominoLine);
 
 int main() {
     try {
-        DominoNode startingDomino = getStartingDomino("dominoes-test_data/10-starting-domino.txt");
-        std::list<DominoNode> inputDominoes = getInputDominoes("dominoes-test_data/10-input-uncoloured.txt");
+        DominoNode startingDomino = getStartingDomino("dominoes-test_data/10/10-starting-domino.txt");
+        std::list<DominoNode> inputDominoes = getInputDominoes("dominoes-test_data/10/10-input-uncoloured.txt");
         
         Dominoes dominoLine(startingDomino, inputDominoes);
         createDominoLine(dominoLine);
@@ -65,8 +65,14 @@ DominoNode getStartingDomino(const std::string& filename) {
 }
 
 void createDominoLine(Dominoes& dominoLine) {
+    int i = 0;
     while (!dominoLine.checkLineCompleted()) {
+        i++;
+        if (i % 1000000 == 0) std::cout << i << std::endl;
         dominoLine.addLeftDomino();
+        if (dominoLine.checkLineCompleted()) {
+            break;
+        }
         dominoLine.addRightDomino();
     }
 }
