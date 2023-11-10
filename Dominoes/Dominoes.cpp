@@ -1,21 +1,15 @@
 #include "Dominoes.h"
 
-Dominoes::Dominoes(const DominoNode& startingDomino, const std::list<DominoNode> &inputDominoes) {
+Dominoes::Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>& inputDominoes) {
     head = new DominoNode(startingDomino.leftSymbol, startingDomino.rightSymbol);
     tail = head;
+    head->isPlaced = true; // The starting domino is placed by default
 
-    dominoLine[startingDomino.leftSymbol] = head;
-    dominoLine[startingDomino.rightSymbol] = head;
-
-    // Populate hash map with nullptrs for each symbol in the input dominoes 
-    // so that it can be checked if a symbol has been used
-    for (const DominoNode& domino : inputDominoes) {
-        if (dominoLine.find(domino.leftSymbol) == dominoLine.end()) {
-            dominoLine[domino.leftSymbol] = nullptr;
-        }
-        if (dominoLine.find(domino.rightSymbol) == dominoLine.end()) {
-            dominoLine[domino.rightSymbol] = nullptr;
-        }
+    // Populate the dominoLine hash map with DominoNode objects
+    // For each domino, create a new DominoNode and insert it into the map
+    for (const auto& domino : inputDominoes) {
+        dominoLine[domino.leftSymbol] = new DominoNode(domino.leftSymbol, domino.rightSymbol);
+        dominoLine[domino.rightSymbol] = dominoLine[domino.leftSymbol];
     }
 
     placedDominoes = 1;
@@ -39,25 +33,30 @@ DominoNode* Dominoes::addLeftDomino() {
     }
 
     std::string matchingSymbol = head->leftSymbol;
-    DominoNode* matchingNode = dominoLine[matchingSymbol];
 
-    // If there is a matching domino that is not already in the line
-    if (matchingNode != nullptr && !matchingNode->isPlaced) {
-        DominoNode* newNode = new DominoNode(matchingNode->leftSymbol, matchingNode->rightSymbol);
+    // Look up all nodes in the hash map to find a matching domino
+    for (auto& entry : dominoLine) {
+        DominoNode* node = entry.second;
+        // If the domino is not already placed and has a matching symbol
+        if (node && !node->isPlaced && (node->leftSymbol == matchingSymbol || node->rightSymbol == matchingSymbol)) {
+            // If the left symbol matches, but the domino needs to be flipped
+            if (node->leftSymbol == matchingSymbol) {
+                std::swap(node->leftSymbol, node->rightSymbol);
+            }
 
-        // Shift the current head to the right and assign the new node as the new head
-        newNode->next = head;
-        head->prev = newNode;
-        head = newNode;
-        newNode->isPlaced = true;
+            // Link the new node to the doubly linked list
+            head->prev = node;
+            node->next = head;
+            node->isPlaced = true;
+            head = node;
+            placedDominoes++;
 
-        dominoLine[newNode->leftSymbol] = newNode;
-        dominoLine[newNode->rightSymbol] = newNode;
-
-        return newNode;
-    } else {
-        return nullptr;
+            return node;
+        }
     }
+
+    // If no matching domino is found or all are already placed
+    return nullptr;
 }
 
 DominoNode* Dominoes::addRightDomino() {
@@ -66,25 +65,30 @@ DominoNode* Dominoes::addRightDomino() {
     }
 
     std::string matchingSymbol = tail->rightSymbol;
-    DominoNode* matchingNode = dominoLine[matchingSymbol];
 
-    // If there is a matching domino that is not already in the line
-    if (matchingNode != nullptr && !matchingNode->isPlaced) {
-        DominoNode* newNode = new DominoNode(matchingNode->leftSymbol, matchingNode->rightSymbol);
+    // Look up all nodes in the hash map to find a matching domino
+    for (auto& entry : dominoLine) {
+        DominoNode* node = entry.second;
+        // If the domino is not already placed and has a matching symbol
+        if (node && !node->isPlaced && (node->leftSymbol == matchingSymbol || node->rightSymbol == matchingSymbol)) {
+            // If the right symbol matches, but the domino needs to be flipped
+            if (node->rightSymbol == matchingSymbol) {
+                std::swap(node->leftSymbol, node->rightSymbol);
+            }
 
-        // Shift the current tail to the left and assign the new node as the new tail
-        newNode->prev = tail;
-        tail->next = newNode;
-        tail = newNode;
-        newNode->isPlaced = true;
+            // Link the new node to the doubly linked list
+            tail->next = node;
+            node->prev = tail;
+            node->isPlaced = true;
+            tail = node;
+            placedDominoes++;
 
-        dominoLine[newNode->leftSymbol] = newNode;
-        dominoLine[newNode->rightSymbol] = newNode;
-
-        return newNode;
-    } else {
-        return nullptr;
+            return node;
+        }
     }
+
+    // If no matching domino is found or all are already placed
+    return nullptr;
 }
 
 bool Dominoes::checkLineCompleted() const {
