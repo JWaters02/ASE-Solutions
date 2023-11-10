@@ -3,7 +3,7 @@
 Dominoes::Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>& inputDominoes) {
     head = new DominoNode(startingDomino.leftSymbol, startingDomino.rightSymbol);
     tail = head;
-    head->isPlaced = true; // The starting domino is placed by default
+    head->isPlaced = true;
 
     // Populate the dominoLine hash map with DominoNode objects
     // For each domino, create a new DominoNode and insert it into the map
@@ -32,7 +32,7 @@ DominoNode* Dominoes::addLeftDomino() {
         throw std::logic_error("No starting domino in the line");
     }
 
-    std::string matchingSymbol = head->leftSymbol;
+    const std::string& matchingSymbol = head->leftSymbol;
 
     // Look up all nodes in the hash map to find a matching domino
     for (auto& entry : dominoLine) {
@@ -45,7 +45,6 @@ DominoNode* Dominoes::addLeftDomino() {
             }
 
             // Link the new node to the doubly linked list
-            head->prev = node;
             node->next = head;
             node->isPlaced = true;
             head = node;
@@ -55,7 +54,6 @@ DominoNode* Dominoes::addLeftDomino() {
         }
     }
 
-    // If no matching domino is found or all are already placed
     return nullptr;
 }
 
@@ -64,7 +62,7 @@ DominoNode* Dominoes::addRightDomino() {
         throw std::logic_error("No starting domino in the line");
     }
 
-    std::string matchingSymbol = tail->rightSymbol;
+    const std::string& matchingSymbol = tail->rightSymbol;
 
     // Look up all nodes in the hash map to find a matching domino
     for (auto& entry : dominoLine) {
@@ -78,7 +76,6 @@ DominoNode* Dominoes::addRightDomino() {
 
             // Link the new node to the doubly linked list
             tail->next = node;
-            node->prev = tail;
             node->isPlaced = true;
             tail = node;
             placedDominoes++;
@@ -87,7 +84,6 @@ DominoNode* Dominoes::addRightDomino() {
         }
     }
 
-    // If no matching domino is found or all are already placed
     return nullptr;
 }
 
@@ -95,10 +91,9 @@ bool Dominoes::checkLineCompleted() const {
     return placedDominoes == totalDominoes;
 }
 
-void Dominoes::displayDominoLine() {
-    DominoNode* current = head;
+void Dominoes::displayDominoLine() const {
+    const DominoNode* current = head;
     std::string line;
-
     while (current != nullptr) {
         line += current->leftSymbol + ":" + current->rightSymbol;
         current = current->next;

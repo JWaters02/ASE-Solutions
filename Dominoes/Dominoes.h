@@ -40,7 +40,7 @@ public:
     DominoNode* addRightDomino();
 
     bool checkLineCompleted() const;
-    void displayDominoLine();
+    void displayDominoLine() const;
 };
 
 

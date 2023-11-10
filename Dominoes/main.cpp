@@ -70,7 +70,9 @@ void createDominoLine(Dominoes& dominoLine) {
         i++;
         if (i % 1000000 == 0) std::cout << i << std::endl;
         dominoLine.addLeftDomino();
+        dominoLine.displayDominoLine();
         if (dominoLine.checkLineCompleted()) break;
         dominoLine.addRightDomino();
+        dominoLine.displayDominoLine();
     }
 }
