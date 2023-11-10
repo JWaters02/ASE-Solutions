@@ -24,16 +24,16 @@ private:
     DominoNode* tail;
 
     std::unordered_map<std::string, DominoNode*> dominoLine;
-    std::list<DominoNode> startingDominoes;
+    std::list<DominoNode> inputDominoes;
 
 public:
-    Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>& dominoes);
+    Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>& inputDominoes);
     ~Dominoes();
 
-    // When called, the next domino in the startingDominoes list is added to the dominoLine on the left
-    DominoNode addLeftDomino(DominoNode domino);
-    // When called, the next domino in the startingDominoes list is added to the dominoLine on the right
-    DominoNode addRightDomino(DominoNode domino);
+    // When called, determines and returns the next domino to be placed in the line to the left
+    DominoNode addLeftDomino();
+    // When called, determines and returns the next domino to be placed in the line to the right
+    DominoNode addRightDomino();
 
     bool checkLineCompleted();
     void displayDominoLine();
