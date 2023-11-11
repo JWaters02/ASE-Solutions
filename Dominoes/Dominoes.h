@@ -28,7 +28,8 @@ private:
     int placedDominoes;
     int totalDominoes;
 
-    std::unordered_map<std::string, DominoNode*> dominoLine;
+    std::unordered_map<std::string, DominoNode*> leftSymbolMap;
+    std::unordered_map<std::string, DominoNode*> rightSymbolMap;
 
 public:
     Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>& inputDominoes);

@@ -5,11 +5,13 @@ Dominoes::Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>
     tail = head;
     head->isPlaced = true;
 
-    // Populate the dominoLine hash map with DominoNode objects
-    // For each domino, create a new DominoNode and insert it into the map
+    leftSymbolMap[startingDomino.leftSymbol] = head;
+    rightSymbolMap[startingDomino.rightSymbol] = head;
+
     for (const auto& domino : inputDominoes) {
-        dominoLine[domino.leftSymbol] = new DominoNode(domino.leftSymbol, domino.rightSymbol);
-        dominoLine[domino.rightSymbol] = dominoLine[domino.leftSymbol];
+        auto* node = new DominoNode(domino.leftSymbol, domino.rightSymbol);
+        leftSymbolMap[domino.leftSymbol] = node;
+        rightSymbolMap[domino.rightSymbol] = node;
     }
 
     placedDominoes = 1;
@@ -34,27 +36,29 @@ DominoNode* Dominoes::addLeftDomino() {
 
     const std::string& matchingSymbol = head->leftSymbol;
 
-    // Look up all nodes in the hash map to find a matching domino
-    for (auto& entry : dominoLine) {
-        DominoNode* node = entry.second;
-        // If the domino is not already placed and has a matching symbol
-        if (node && !node->isPlaced && (node->leftSymbol == matchingSymbol || node->rightSymbol == matchingSymbol)) {
-            // If the left symbol matches, but the domino needs to be flipped
-            if (node->leftSymbol == matchingSymbol) {
-                std::swap(node->leftSymbol, node->rightSymbol);
-            }
-
-            // Link the new node to the doubly linked list
-            node->next = head;
-            node->isPlaced = true;
-            head = node;
-            placedDominoes++;
-
-            return node;
-        }
+    if (rightSymbolMap.count(matchingSymbol) == 0) {
+        return nullptr; // No dominoes with the matching symbol on the right
     }
 
-    return nullptr;
+    DominoNode* node = rightSymbolMap[matchingSymbol];
+
+    if (node == nullptr || node->isPlaced) {
+        return nullptr; // No matching domino found or it's already placed
+    }
+
+    // If the right symbol matches, no need to flip
+    // Link the new node to the left of the current head
+    node->next = head;
+    head->prev = node;
+    node->isPlaced = true;
+    head = node;
+    placedDominoes++;
+
+    // Remove from the maps to prevent reuse
+    leftSymbolMap.erase(node->leftSymbol);
+    rightSymbolMap.erase(node->rightSymbol);
+
+    return node;
 }
 
 DominoNode* Dominoes::addRightDomino() {
@@ -64,27 +68,29 @@ DominoNode* Dominoes::addRightDomino() {
 
     const std::string& matchingSymbol = tail->rightSymbol;
 
-    // Look up all nodes in the hash map to find a matching domino
-    for (auto& entry : dominoLine) {
-        DominoNode* node = entry.second;
-        // If the domino is not already placed and has a matching symbol
-        if (node && !node->isPlaced && (node->leftSymbol == matchingSymbol || node->rightSymbol == matchingSymbol)) {
-            // If the right symbol matches, but the domino needs to be flipped
-            if (node->rightSymbol == matchingSymbol) {
-                std::swap(node->leftSymbol, node->rightSymbol);
-            }
-
-            // Link the new node to the doubly linked list
-            tail->next = node;
-            node->isPlaced = true;
-            tail = node;
-            placedDominoes++;
-
-            return node;
-        }
+    if (leftSymbolMap.count(matchingSymbol) == 0) {
+        return nullptr; // No dominoes with the matching symbol on the left
     }
 
-    return nullptr;
+    DominoNode* node = leftSymbolMap[matchingSymbol];
+
+    if (node == nullptr || node->isPlaced) {
+        return nullptr; // No matching domino found or it's already placed
+    }
+
+    // If the left symbol matches, no need to flip
+    // Link the new node to the right of the current tail
+    node->prev = tail;
+    tail->next = node;
+    node->isPlaced = true;
+    tail = node;
+    placedDominoes++;
+
+    // Remove from the maps to prevent reuse
+    leftSymbolMap.erase(node->leftSymbol);
+    rightSymbolMap.erase(node->rightSymbol);
+
+    return node;
 }
 
 bool Dominoes::checkLineCompleted() const {
