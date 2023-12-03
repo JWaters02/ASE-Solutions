@@ -10,7 +10,7 @@ int main() {
         const std::list<DominoNode*> inputDominoes = dominoUtils.getInputDominoes("dominoes-test_data/example/example-input-uncoloured.txt");
         DominoesWorstCase dominoLine(startingDomino, inputDominoes);
         dominoUtils.createDominoLine(dominoLine);
-        dominoLine.displayDominoLine();
+        dominoLine.displayDominoLine(std::cerr);
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
     }

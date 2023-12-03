@@ -30,4 +30,14 @@ add_executable(Dominoes_Tests
         DominoesWorstCase.cpp DominoesWorstCase.h
         DominoesAverageCase.cpp DominoesAverageCase.h)
 
-target_link_libraries(Dominoes_Tests PRIVATE GTest::gtest_main Python3::Python)
+add_executable(Dominoes_Benchmarks
+        DominoBenchmark.cpp
+        DominoUtils.h
+        DominoesInterface.h
+        DominoesWorstCase.cpp DominoesWorstCase.h
+        DominoesAverageCase.cpp DominoesAverageCase.h)
+
+target_link_libraries(Dominoes_Tests PRIVATE GTest::gtest_main)
+target_link_libraries(Dominoes_Benchmarks PRIVATE Python3::Python)
+
+configure_file(benchmarkGraphGen.py ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/benchmarkGraphGen.py COPYONLY)

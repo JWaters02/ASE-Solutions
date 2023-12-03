@@ -50,3 +50,13 @@ TEST(DominoesAverageCase, 600) {
     std::string path = startingDominoFilename + "600/600-";
     testDominoLineScenario<DominoesAverageCase>(path);
 }
+
+TEST(DominoesWorstCase, 10K) {
+    std::string path = startingDominoFilename + "10K/10K-";
+    testDominoLineScenario<DominoesWorstCase>(path);
+}
+
+TEST(DominoesAverageCase, 10K) {
+    std::string path = startingDominoFilename + "10K/10K-";
+    testDominoLineScenario<DominoesAverageCase>(path);
+}
