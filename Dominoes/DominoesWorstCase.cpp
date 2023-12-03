@@ -59,7 +59,28 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
     if (matchingDomino) {
         head = matchingDomino;
         dominoLine.push_front(matchingDomino);
-        return placeDomino(matchingDomino);
+        matchingDomino->isPlaced = true;
+        placedDominoes++;
+        // Correctly erase the placed domino from the multimap
+        auto range = dominoMap.equal_range(matchingDomino->leftSymbol);
+        for (auto it = range.first; it != range.second;) {
+            if (it->second == matchingDomino) {
+                it = dominoMap.erase(it); // Erase and move to the next element
+            } else {
+                ++it; // Move to the next element without erasing
+            }
+        }
+
+        range = dominoMap.equal_range(matchingDomino->rightSymbol);
+        for (auto it = range.first; it != range.second;) {
+            if (it->second == matchingDomino) {
+                it = dominoMap.erase(it); // Erase and move to the next element
+            } else {
+                ++it; // Move to the next element without erasing
+            }
+        }
+        unplacedDominoes.erase(matchingDomino);
+        return matchingDomino;
     }
 
     return nullptr;
@@ -88,7 +109,30 @@ DominoNode* DominoesWorstCase::addRightDomino() {
     if (matchingDomino) {
         tail = matchingDomino;
         dominoLine.push_back(matchingDomino);
-        return placeDomino(matchingDomino);
+        matchingDomino->isPlaced = true;
+        placedDominoes++;
+
+        // Correctly erase the placed domino from the multimap
+        auto range = dominoMap.equal_range(matchingDomino->leftSymbol);
+        for (auto it = range.first; it != range.second;) {
+            if (it->second == matchingDomino) {
+                it = dominoMap.erase(it); // Erase and move to the next element
+            } else {
+                ++it; // Move to the next element without erasing
+            }
+        }
+
+        range = dominoMap.equal_range(matchingDomino->rightSymbol);
+        for (auto it = range.first; it != range.second;) {
+            if (it->second == matchingDomino) {
+                it = dominoMap.erase(it); // Erase and move to the next element
+            } else {
+                ++it; // Move to the next element without erasing
+            }
+        }
+
+        unplacedDominoes.erase(matchingDomino);
+        return matchingDomino;
     }
 
     return nullptr;

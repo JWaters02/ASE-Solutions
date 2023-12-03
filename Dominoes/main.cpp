@@ -65,7 +65,7 @@ void createDominoLine(DominoesWorstCase& dominoLine) {
     int i = 0;
     while (!dominoLine.checkLineCompleted()) {
         i++;
-        if (i == 10) break;
+        //if (i == 10) break;
         dominoLine.addLeftDomino();
         dominoLine.displayDominoLine();
         if (dominoLine.checkLineCompleted()) break;
