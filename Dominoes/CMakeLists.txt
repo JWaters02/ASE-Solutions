@@ -16,10 +16,18 @@ FetchContent_MakeAvailable(googletest)
 
 file(COPY dominoes-test_data DESTINATION ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 
-add_executable(Dominoes
+add_executable(Dominoes_Solutions
         main.cpp
+        DominoUtils.h
         DominoesInterface.h
         DominoesWorstCase.cpp DominoesWorstCase.h
         DominoesAverageCase.cpp DominoesAverageCase.h)
 
-target_link_libraries(Dominoes PRIVATE GTest::gtest_main Python3::Python)
+add_executable(Dominoes_Tests
+        DominoesTests.cpp
+        DominoUtils.h
+        DominoesInterface.h
+        DominoesWorstCase.cpp DominoesWorstCase.h
+        DominoesAverageCase.cpp DominoesAverageCase.h)
+
+target_link_libraries(Dominoes_Tests PRIVATE GTest::gtest_main Python3::Python)

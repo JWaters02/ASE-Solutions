@@ -1,5 +1,4 @@
-#ifndef ASE_SOLUTIONS_DOMINOESWORSTCASE_H
-#define ASE_SOLUTIONS_DOMINOESWORSTCASE_H
+#pragma once
 
 #include <map>
 #include <unordered_set>
@@ -28,11 +27,5 @@ public:
     DominoNode* addRightDomino() override;
 
     bool checkLineCompleted() const override;
-    void displayDominoLine() const override;
-
-    const std::list<DominoNode*>& getDominoLine() const override {
-        return dominoLine;
-    };
+    void displayDominoLine(std::ostream& stream) const override;
 };
-
-#endif //ASE_SOLUTIONS_DOMINOESWORSTCASE_H

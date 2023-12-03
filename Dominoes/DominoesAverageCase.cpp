@@ -68,9 +68,8 @@ bool DominoesAverageCase::checkLineCompleted() const {
     return placedDominoes == totalDominoes;
 }
 
-void DominoesAverageCase::displayDominoLine() const {
+void DominoesAverageCase::displayDominoLine(std::ostream& stream) const {
     for (const auto& domino : dominoLine) {
-        std::cout << domino->leftSymbol << ":" << domino->rightSymbol << " ";
+        stream << domino->leftSymbol << ":" << domino->rightSymbol << " ";
     }
-    std::cout << std::endl;
 }
