@@ -45,14 +45,14 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
     DominoNode* matchingDomino = nullptr;
     auto range = dominoMap.equal_range(head->leftSymbol);
 
-    for (auto it = range.first; it != range.second; ++it) {
-        DominoNode* domino = it->second;
+    if (range.first != range.second) {
+        DominoNode* domino = range.first->second;
         if (!domino->isPlaced && unplacedDominoes.find(domino) != unplacedDominoes.end()) {
             if (domino->leftSymbol == head->leftSymbol) {
                 std::swap(domino->leftSymbol, domino->rightSymbol); // Flip domino
             }
             matchingDomino = domino;
-            break;
+            dominoMap.erase(range.first);
         }
     }
 
@@ -61,22 +61,15 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
         dominoLine.push_front(matchingDomino);
         matchingDomino->isPlaced = true;
         placedDominoes++;
-        // Correctly erase the placed domino from the multimap
-        auto range = dominoMap.equal_range(matchingDomino->leftSymbol);
-        for (auto it = range.first; it != range.second;) {
-            if (it->second == matchingDomino) {
-                it = dominoMap.erase(it); // Erase and move to the next element
-            } else {
-                ++it; // Move to the next element without erasing
-            }
-        }
 
-        range = dominoMap.equal_range(matchingDomino->rightSymbol);
+        // Correctly erase the placed domino from the multimap - as it can contain multiple elements with the same key
+        // And it only ever does two iterations to erase the correct symbol
+        range = dominoMap.equal_range(matchingDomino->leftSymbol);
         for (auto it = range.first; it != range.second;) {
             if (it->second == matchingDomino) {
-                it = dominoMap.erase(it); // Erase and move to the next element
+                it = dominoMap.erase(it);
             } else {
-                ++it; // Move to the next element without erasing
+                ++it;
             }
         }
         unplacedDominoes.erase(matchingDomino);
@@ -95,14 +88,14 @@ DominoNode* DominoesWorstCase::addRightDomino() {
     DominoNode* matchingDomino = nullptr;
     auto range = dominoMap.equal_range(tail->rightSymbol);
 
-    for (auto it = range.first; it != range.second; ++it) {
-        DominoNode* domino = it->second;
+    if (range.first != range.second) {
+        DominoNode* domino = range.first->second;
         if (!domino->isPlaced && unplacedDominoes.find(domino) != unplacedDominoes.end()) {
             if (domino->rightSymbol == tail->rightSymbol) {
                 std::swap(domino->leftSymbol, domino->rightSymbol);
             }
+            dominoMap.erase(range.first);
             matchingDomino = domino;
-            break;
         }
     }
 
@@ -112,22 +105,14 @@ DominoNode* DominoesWorstCase::addRightDomino() {
         matchingDomino->isPlaced = true;
         placedDominoes++;
 
-        // Correctly erase the placed domino from the multimap
-        auto range = dominoMap.equal_range(matchingDomino->leftSymbol);
-        for (auto it = range.first; it != range.second;) {
-            if (it->second == matchingDomino) {
-                it = dominoMap.erase(it); // Erase and move to the next element
-            } else {
-                ++it; // Move to the next element without erasing
-            }
-        }
-
+        // Correctly erase the placed domino from the multimap - as it can contain multiple elements with the same key
+        // And it only ever does two iterations to erase the correct symbol
         range = dominoMap.equal_range(matchingDomino->rightSymbol);
         for (auto it = range.first; it != range.second;) {
             if (it->second == matchingDomino) {
-                it = dominoMap.erase(it); // Erase and move to the next element
+                it = dominoMap.erase(it);
             } else {
-                ++it; // Move to the next element without erasing
+                ++it;
             }
         }
 

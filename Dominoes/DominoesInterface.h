@@ -27,6 +27,8 @@ public:
 
     virtual bool checkLineCompleted() const = 0;
     virtual void displayDominoLine() const = 0;
+
+    virtual const std::list<DominoNode*>& getDominoLine() const = 0;
 };
 
 

@@ -29,6 +29,10 @@ public:
 
     bool checkLineCompleted() const override;
     void displayDominoLine() const override;
+
+    const std::list<DominoNode*>& getDominoLine() const override {
+        return dominoLine;
+    };
 };
 
 #endif //ASE_SOLUTIONS_DOMINOESWORSTCASE_H
