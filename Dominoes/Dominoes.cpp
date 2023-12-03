@@ -1,17 +1,12 @@
 #include "Dominoes.h"
 
-Dominoes::Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>& inputDominoes) {
-    head = new DominoNode(startingDomino.leftSymbol, startingDomino.rightSymbol);
-    tail = head;
-    head->isPlaced = true;
+Dominoes::Dominoes(DominoNode* startingDomino, const std::vector<DominoNode*>& inputDominoes) {
+    startDomino = startingDomino;
+    head = tail = startDomino;
+    startDomino->isPlaced = true;
 
-    leftSymbolMap[startingDomino.leftSymbol] = head;
-    rightSymbolMap[startingDomino.rightSymbol] = head;
-
-    for (const auto& domino : inputDominoes) {
-        auto* node = new DominoNode(domino.leftSymbol, domino.rightSymbol);
-        leftSymbolMap[domino.leftSymbol] = node;
-        rightSymbolMap[domino.rightSymbol] = node;
+    for (auto& domino : inputDominoes) {
+        insertInMap(domino);
     }
 
     placedDominoes = 1;
@@ -30,67 +25,30 @@ Dominoes::~Dominoes() {
 }
 
 DominoNode* Dominoes::addLeftDomino() {
-    if (head == nullptr) {
-        throw std::logic_error("No starting domino in the line");
+    auto it = rightSymbolMap.find(head->leftSymbol);
+    if (it != rightSymbolMap.end() && !it->second->isPlaced) {
+        DominoNode* newDomino = it->second;
+        newDomino->isPlaced = true;
+        newDomino->next = head;
+        head->prev = newDomino;
+        head = newDomino;
+        placedDominoes++;
+        return newDomino;
     }
-
-    const std::string& matchingSymbol = head->leftSymbol;
-
-    if (rightSymbolMap.count(matchingSymbol) == 0) {
-        return nullptr; // No dominoes with the matching symbol on the right
-    }
-
-    DominoNode* node = rightSymbolMap[matchingSymbol];
-
-    if (node == nullptr || node->isPlaced) {
-        return nullptr; // No matching domino found or it's already placed
-    }
-
-    // If the right symbol matches, no need to flip
-    // Link the new node to the left of the current head
-    node->next = head;
-    head->prev = node;
-    node->isPlaced = true;
-    head = node;
-    placedDominoes++;
-
-    // Remove from the maps to prevent reuse
-    leftSymbolMap.erase(node->leftSymbol);
-    rightSymbolMap.erase(node->rightSymbol);
-
-    return node;
+    return nullptr;
 }
 
 DominoNode* Dominoes::addRightDomino() {
-    if (tail == nullptr) {
-        throw std::logic_error("No starting domino in the line");
+    auto it = leftSymbolMap.find(tail->rightSymbol);
+    if (it != leftSymbolMap.end() && !it->second->isPlaced) {
+        DominoNode* newDomino = it->second;
+        newDomino->isPlaced = true;
+        newDomino->prev = tail;
+        tail->next = newDomino;
+        tail = newDomino;
+        return newDomino;
     }
-
-    const std::string& matchingSymbol = tail->rightSymbol;
-
-    if (leftSymbolMap.count(matchingSymbol) == 0) {
-        return nullptr; // No dominoes with the matching symbol on the left
-    }
-
-    DominoNode* node = leftSymbolMap[matchingSymbol];
-
-    if (node == nullptr || node->isPlaced) {
-        return nullptr; // No matching domino found or it's already placed
-    }
-
-    // If the left symbol matches, no need to flip
-    // Link the new node to the right of the current tail
-    node->prev = tail;
-    tail->next = node;
-    node->isPlaced = true;
-    tail = node;
-    placedDominoes++;
-
-    // Remove from the maps to prevent reuse
-    leftSymbolMap.erase(node->leftSymbol);
-    rightSymbolMap.erase(node->rightSymbol);
-
-    return node;
+    return nullptr;
 }
 
 bool Dominoes::checkLineCompleted() const {

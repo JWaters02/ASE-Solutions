@@ -24,6 +24,7 @@ class Dominoes {
 private:
     DominoNode* head; // Leftmost domino
     DominoNode* tail; // Rightmost domino
+    DominoNode* startDomino;
 
     int placedDominoes;
     int totalDominoes;
@@ -31,8 +32,13 @@ private:
     std::unordered_map<std::string, DominoNode*> leftSymbolMap;
     std::unordered_map<std::string, DominoNode*> rightSymbolMap;
 
+    void insertInMap(DominoNode* domino) {
+        leftSymbolMap[domino->leftSymbol] = domino;
+        rightSymbolMap[domino->rightSymbol] = domino;
+    }
+
 public:
-    Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>& inputDominoes);
+    Dominoes(DominoNode* startingDomino, const std::vector<DominoNode*>& inputDominoes);
     ~Dominoes();
 
     // When called, determines and returns the next domino to be placed in the line to the left
