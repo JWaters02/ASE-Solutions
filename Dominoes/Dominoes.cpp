@@ -1,15 +1,15 @@
 #include "Dominoes.h"
 
-Dominoes::Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>& inputDominoes) {
-    head = new DominoNode(startingDomino.leftSymbol, startingDomino.rightSymbol);
-    tail = head;
-    head->isPlaced = true;
+Dominoes::Dominoes(DominoNode* startingDomino, const std::list<DominoNode*>& inputDominoes) {
+    startingDomino->isPlaced = true;
+    head = tail = startingDomino;
+    dominoLine.push_back(startingDomino);
 
     // Populate the dominoLine hash map with DominoNode objects
     // For each domino, create a new DominoNode and insert it into the map
-    for (const auto& domino : inputDominoes) {
-        dominoLine[domino.leftSymbol] = new DominoNode(domino.leftSymbol, domino.rightSymbol);
-        dominoLine[domino.rightSymbol] = dominoLine[domino.leftSymbol];
+    for (auto& domino : inputDominoes) {
+        dominoMap[domino->leftSymbol].push_back(domino);
+        dominoMap[domino->rightSymbol].push_back(domino);
     }
 
     placedDominoes = 1;
@@ -17,14 +17,9 @@ Dominoes::Dominoes(const DominoNode& startingDomino, const std::list<DominoNode>
 }
 
 Dominoes::~Dominoes() {
-    DominoNode* current = head;
-    while (current != nullptr) {
-        DominoNode* next = current->next;
-        delete current;
-        current = next;
+    for (auto& domino : dominoLine) {
+        delete domino;
     }
-    head = nullptr;
-    tail = nullptr;
 }
 
 DominoNode* Dominoes::addLeftDomino() {
@@ -32,28 +27,26 @@ DominoNode* Dominoes::addLeftDomino() {
         throw std::logic_error("No starting domino in the line");
     }
 
-    const std::string& matchingSymbol = head->leftSymbol;
-
-    // Look up all nodes in the hash map to find a matching domino
-    for (auto& entry : dominoLine) {
-        DominoNode* node = entry.second;
-        // If the domino is not already placed and has a matching symbol
-        if (node && !node->isPlaced && (node->leftSymbol == matchingSymbol || node->rightSymbol == matchingSymbol)) {
-            // If the left symbol matches, but the domino needs to be flipped
-            if (node->leftSymbol == matchingSymbol) {
-                std::swap(node->leftSymbol, node->rightSymbol);
-            }
-
-            // Link the new node to the doubly linked list
-            node->next = head;
-            node->isPlaced = true;
-            head = node;
+    auto& dominoList = dominoMap[head->leftSymbol];
+    for (auto& domino : dominoList) {
+        if (!domino->isPlaced) {
             placedDominoes++;
-
-            return node;
+            if (domino->rightSymbol == head->leftSymbol) {
+                // No need to flip
+                domino->isPlaced = true;
+                head = domino;
+                dominoLine.push_front(domino);
+                return domino;
+            } if (domino->leftSymbol == head->leftSymbol) {
+                // Flip domino
+                std::swap(domino->leftSymbol, domino->rightSymbol);
+                domino->isPlaced = true;
+                head = domino;
+                dominoLine.push_front(domino);
+                return domino;
+            }
         }
     }
-
     return nullptr;
 }
 
@@ -62,28 +55,26 @@ DominoNode* Dominoes::addRightDomino() {
         throw std::logic_error("No starting domino in the line");
     }
 
-    const std::string& matchingSymbol = tail->rightSymbol;
-
-    // Look up all nodes in the hash map to find a matching domino
-    for (auto& entry : dominoLine) {
-        DominoNode* node = entry.second;
-        // If the domino is not already placed and has a matching symbol
-        if (node && !node->isPlaced && (node->leftSymbol == matchingSymbol || node->rightSymbol == matchingSymbol)) {
-            // If the right symbol matches, but the domino needs to be flipped
-            if (node->rightSymbol == matchingSymbol) {
-                std::swap(node->leftSymbol, node->rightSymbol);
-            }
-
-            // Link the new node to the doubly linked list
-            tail->next = node;
-            node->isPlaced = true;
-            tail = node;
+    auto& dominoList = dominoMap[tail->rightSymbol];
+    for (auto& domino : dominoList) {
+        if (!domino->isPlaced) {
             placedDominoes++;
-
-            return node;
+            if (domino->leftSymbol == tail->rightSymbol) {
+                // No need to flip
+                domino->isPlaced = true;
+                tail = domino;
+                dominoLine.push_back(domino);
+                return domino;
+            } if (domino->rightSymbol == tail->rightSymbol) {
+                // Flip domino
+                std::swap(domino->leftSymbol, domino->rightSymbol);
+                domino->isPlaced = true;
+                tail = domino;
+                dominoLine.push_back(domino);
+                return domino;
+            }
         }
     }
-
     return nullptr;
 }
 
@@ -92,15 +83,8 @@ bool Dominoes::checkLineCompleted() const {
 }
 
 void Dominoes::displayDominoLine() const {
-    const DominoNode* current = head;
-    std::string line;
-    while (current != nullptr) {
-        line += current->leftSymbol + ":" + current->rightSymbol;
-        current = current->next;
-        if (current != nullptr) {
-            line += " ";
-        }
+    for (const auto& domino : dominoLine) {
+        std::cout << domino->leftSymbol << ":" << domino->rightSymbol << " ";
     }
-
-    std::cout << line << std::endl;
+    std::cout << std::endl;
 }
