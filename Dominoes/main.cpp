@@ -68,11 +68,11 @@ void createDominoLine(Dominoes& dominoLine) {
     int i = 0;
     while (!dominoLine.checkLineCompleted()) {
         i++;
-        if (i % 1000000 == 0) std::cout << i << std::endl;
+        if (i % 20 == 0) break;
         dominoLine.addLeftDomino();
         dominoLine.displayDominoLine();
         if (dominoLine.checkLineCompleted()) break;
-        dominoLine.addRightDomino();
-        dominoLine.displayDominoLine();
+        //dominoLine.addRightDomino();
+        //dominoLine.displayDominoLine();
     }
 }
