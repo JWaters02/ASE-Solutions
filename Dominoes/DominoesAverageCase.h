@@ -1,5 +1,4 @@
-#ifndef ASE_SOLUTIONS_DOMINOESAVERAGECASE_H
-#define ASE_SOLUTIONS_DOMINOESAVERAGECASE_H
+#pragma once
 
 #include <unordered_map>
 
@@ -24,7 +23,5 @@ public:
     DominoNode* addRightDomino() override;
 
     bool checkLineCompleted() const override;
-    void displayDominoLine() const override;
+    void displayDominoLine(std::ostream& stream) const override;
 };
-
-#endif //ASE_SOLUTIONS_DOMINOESAVERAGECASE_H

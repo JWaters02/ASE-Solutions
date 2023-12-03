@@ -1,5 +1,4 @@
-#ifndef ASE_SOLUTIONS_DOMINOES_H
-#define ASE_SOLUTIONS_DOMINOES_H
+#pragma once
 
 #include <iostream>
 #include <unordered_map>
@@ -26,8 +25,5 @@ public:
     virtual DominoNode* addRightDomino() = 0;
 
     virtual bool checkLineCompleted() const = 0;
-    virtual void displayDominoLine() const = 0;
+    virtual void displayDominoLine(std::ostream& stream) const = 0;
 };
-
-
-#endif //ASE_SOLUTIONS_DOMINOES_H
