@@ -16,28 +16,17 @@ struct DominoNode {
     }
 };
 
-class Dominoes {
-private:
-    DominoNode* head; // Leftmost domino
-    DominoNode* tail; // Rightmost domino
-
-    int placedDominoes;
-    int totalDominoes;
-
-    std::unordered_map<std::string, std::list<DominoNode*>> dominoMap;
-    std::list<DominoNode*> dominoLine;
-
+class DominoesInterface {
 public:
-    Dominoes(DominoNode* startingDomino, const std::list<DominoNode*>& inputDominoes);
-    ~Dominoes();
+    virtual ~DominoesInterface() = default;
 
     // When called, determines and returns the next domino to be placed in the line to the left
-    DominoNode* addLeftDomino();
+    virtual DominoNode* addLeftDomino() = 0;
     // When called, determines and returns the next domino to be placed in the line to the right
-    DominoNode* addRightDomino();
+    virtual DominoNode* addRightDomino() = 0;
 
-    bool checkLineCompleted() const;
-    void displayDominoLine() const;
+    virtual bool checkLineCompleted() const = 0;
+    virtual void displayDominoLine() const = 0;
 };
 
 

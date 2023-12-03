@@ -3,18 +3,20 @@
 #include <fstream>
 #include <sstream>
 
-#include "Dominoes.h"
+#include "DominoesInterface.h"
+#include "DominoesWorstCase.h"
+#include "DominoesAverageCase.h"
 
 DominoNode* getStartingDomino(const std::string& filename);
 std::list<DominoNode*> getInputDominoes(const std::string& filename);
-void createDominoLine(Dominoes& dominoLine);
+void createDominoLine(DominoesWorstCase& dominoLine);
 
 int main() {
     try {
-        DominoNode* startingDomino = getStartingDomino("dominoes-test_data/10/10-starting-domino.txt");
-        std::list<DominoNode*> inputDominoes = getInputDominoes("dominoes-test_data/10/10-input-uncoloured.txt");
+        DominoNode* startingDomino = getStartingDomino("dominoes-test_data/example/example-starting-domino.txt");
+        const std::list<DominoNode*> inputDominoes = getInputDominoes("dominoes-test_data/example/example-input-uncoloured.txt");
         
-        Dominoes dominoLine(startingDomino, inputDominoes);
+        DominoesWorstCase dominoLine(startingDomino, inputDominoes);
         createDominoLine(dominoLine);
         dominoLine.displayDominoLine();
     } catch (const std::exception& e) {
@@ -50,21 +52,20 @@ DominoNode* getStartingDomino(const std::string& filename) {
     }
     std::getline(file, line);
 
-    size_t colonPos = line.find(':');
-    if (colonPos != std::string::npos) {
-        std::string leftSymbol = line.substr(0, colonPos);
-        std::string rightSymbol = line.substr(colonPos + 1);
+    if (const size_t colonPos = line.find(':'); colonPos != std::string::npos) {
+        const std::string leftSymbol = line.substr(0, colonPos);
+        const std::string rightSymbol = line.substr(colonPos + 1);
         return new DominoNode(leftSymbol, rightSymbol);
     }
 
     throw std::runtime_error("Invalid starting domino");
 }
 
-void createDominoLine(Dominoes& dominoLine) {
+void createDominoLine(DominoesWorstCase& dominoLine) {
     int i = 0;
     while (!dominoLine.checkLineCompleted()) {
         i++;
-        if (i % 20 == 0) break;
+        if (i == 10) break;
         dominoLine.addLeftDomino();
         dominoLine.displayDominoLine();
         if (dominoLine.checkLineCompleted()) break;
