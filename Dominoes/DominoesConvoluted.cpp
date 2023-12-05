@@ -11,7 +11,7 @@ DominoesConvoluted::DominoesConvoluted(std::pair<BlueSymbol, RedSymbol> starting
 
     // 3. Iteratively calculate the positions of the red symbols
     int distance = 1;
-    while (distance < listA.size()) {
+    while (distance < listA.size() + 1) {
         // a. Make a copy of List A called ListB
         std::list<std::pair<BlueSymbol, RedSymbol>> listB = listA;
 
@@ -59,9 +59,9 @@ DominoesConvoluted::DominoesConvoluted(std::pair<BlueSymbol, RedSymbol> starting
             else if (itA != listA.end() && itB->first > itA->second) {
                 itA++;
             }
-//            else {
-//                itB++;
-//            }
+            else {
+                itB++;
+            }
         }
 
         // f. Overwrite List A with List C

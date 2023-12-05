@@ -12,7 +12,9 @@
 class DominoUtils {
 public:
     static DominoNode* getStartingDomino(const std::string& filename);
+    static std::pair<std::string, std::string> getStartingDominoConvoluted(const std::string& filename);
     static std::list<DominoNode*> getInputDominoes(const std::string& filename);
+    static std::list<std::pair<std::string, std::string>> getInputDominoesConvoluted(const std::string& filename);
     static std::string getOutputDominoes(const std::string& filename);
 
     template<class T>
@@ -37,6 +39,24 @@ DominoNode* DominoUtils::getStartingDomino(const std::string& filename) {
     throw std::runtime_error("Invalid starting domino");
 }
 
+std::pair<std::string, std::string> DominoUtils::getStartingDominoConvoluted(const std::string &filename) {
+    std::string line;
+
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        throw std::runtime_error("File not found");
+    }
+    std::getline(file, line);
+
+    if (const size_t colonPos = line.find(':'); colonPos != std::string::npos) {
+        const std::string leftSymbol = line.substr(0, colonPos);
+        const std::string rightSymbol = line.substr(colonPos + 1);
+        return std::pair<std::string, std::string>(leftSymbol, rightSymbol);
+    }
+
+    throw std::runtime_error("Invalid starting domino");
+}
+
 std::list<DominoNode*> DominoUtils::getInputDominoes(const std::string& filename) {
     std::list<DominoNode*> dominoes;
     std::ifstream file(filename);
@@ -47,6 +67,23 @@ std::list<DominoNode*> DominoUtils::getInputDominoes(const std::string& filename
         std::string leftSymbol, rightSymbol;
         if (getline(iss, leftSymbol, ':') && getline(iss, rightSymbol)) {
             dominoes.push_back(new DominoNode(leftSymbol, rightSymbol));
+        }
+    }
+
+    file.close();
+    return dominoes;
+}
+
+std::list<std::pair<std::string, std::string>> DominoUtils::getInputDominoesConvoluted(const std::string &filename) {
+    std::list<std::pair<std::string, std::string>> dominoes;
+    std::ifstream file(filename);
+    std::string line;
+
+    while (getline(file, line)) {
+        std::istringstream iss(line);
+        std::string leftSymbol, rightSymbol;
+        if (getline(iss, leftSymbol, ':') && getline(iss, rightSymbol)) {
+            dominoes.push_back(std::pair<std::string, std::string>(leftSymbol, rightSymbol));
         }
     }
 

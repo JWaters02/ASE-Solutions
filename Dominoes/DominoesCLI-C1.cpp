@@ -12,12 +12,10 @@ int main(int argc, char *argv[]) {
 
     try {
         DominoUtils dominoUtils;
-        DominoNode* startingDomino = dominoUtils.getStartingDomino(argv[1]);
-        const std::list<DominoNode*> inputDominoes = dominoUtils.getInputDominoes(argv[2]);
+        std::pair<std::string, std::string> startingDomino = dominoUtils.getStartingDominoConvoluted(argv[1]);
+        const std::list<std::pair<std::string, std::string>> inputDominoes = dominoUtils.getInputDominoesConvoluted(argv[2]);
 
         DominoesConvoluted dominoLine(startingDomino, inputDominoes);
-        dominoUtils.createDominoLine(dominoLine);
-
         dominoLine.displayDominoLine(std::cout);
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
