@@ -5,8 +5,9 @@
 #include <fstream>
 #include <sstream>
 
-#include "DominoesWorstCase.h"
 #include "DominoesAverageCase.h"
+#include "DominoesWorstCase.h"
+#include "DominoesConvoluted.h"
 
 class DominoUtils {
 public:

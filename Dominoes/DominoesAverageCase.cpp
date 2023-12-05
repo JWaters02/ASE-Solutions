@@ -6,7 +6,6 @@ DominoesAverageCase::DominoesAverageCase(DominoNode* startingDomino, const std::
     dominoLine.push_back(startingDomino);
 
     // Populate the dominoMap hash map with DominoNode objects
-    // For each domino, create a new DominoNode and insert it into the map
     for (auto& domino : inputDominoes) {
         dominoMap[domino->leftSymbol].push_back(domino);
         dominoMap[domino->rightSymbol].push_back(domino);

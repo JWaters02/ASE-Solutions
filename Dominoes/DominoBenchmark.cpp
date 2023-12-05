@@ -39,8 +39,8 @@ std::chrono::nanoseconds timingTest(int numTests, std::string path) {
 void iterateTests() {
     std::vector<std::string> testSizes = {
             /*"10", "30", "60",
-            "100", "300", "600",
-            "1K", "3K", "6K",*/
+            "100", "300", "600",*/
+            "1K", "3K", "6K",
             "10K", "30K", "60K",
             "100K", "300K", "600K",
             "1M"

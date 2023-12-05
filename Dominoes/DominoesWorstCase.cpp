@@ -43,6 +43,9 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
 
     // Get all dominoes with the same left symbol as the head
     DominoNode* matchingDomino = nullptr;
+    // multimap equal_range has a complexity of O(log n + m)
+    // where n is the number of elements in the multimap
+    // and m is the number of elements matching the key
     auto range = dominoMap.equal_range(head->leftSymbol);
 
     if (range.first != range.second) {
@@ -64,6 +67,7 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
 
         // Correctly erase the placed domino from the multimap - as it can contain multiple elements with the same key
         // And it only ever does two iterations to erase the correct symbol
+        // But with equal_range it is O(log n + m) anyway
         range = dominoMap.equal_range(matchingDomino->leftSymbol);
         for (auto it = range.first; it != range.second;) {
             if (it->second == matchingDomino) {
