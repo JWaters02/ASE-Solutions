@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-csv_file_path = "benchmarkGraphGen.csv"
+csv_file_path = "benchmarkFullTest.csv"
 try:
     data = pd.read_csv(csv_file_path)
     print(data)
@@ -27,7 +27,7 @@ try:
     plt.ylabel('Time (s)')
     plt.legend()
 
-    plt.title('Dominoes Time Comparison')
+    plt.title('Dominoes Time Comparison (For constructor and creating the line)')
     plt.grid(True)
     plt.show()
 

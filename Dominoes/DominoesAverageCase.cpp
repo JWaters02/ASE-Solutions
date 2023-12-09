@@ -26,6 +26,7 @@ DominoNode* DominoesAverageCase::addLeftDomino() {
         throw std::logic_error("No starting domino in the line");
     }
 
+    // This can never be longer than 2 elements
     const auto& dominoList = dominoMap[head->leftSymbol];
     for (auto& domino : dominoList) {
         if (!domino->isPlaced) {
@@ -47,6 +48,7 @@ DominoNode* DominoesAverageCase::addRightDomino() {
         throw std::logic_error("No starting domino in the line");
     }
 
+    // This can never be longer than 2 elements
     const auto& dominoList = dominoMap[tail->rightSymbol];
     for (auto& domino : dominoList) {
         if (!domino->isPlaced) {

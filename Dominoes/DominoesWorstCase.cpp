@@ -30,11 +30,8 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
 
     // Get all dominoes with the same left symbol as the head
     DominoNode* matchingDomino = nullptr;
-    // multimap equal_range has a complexity of O(log n + m)
-    // where n is the number of elements in the multimap
-    // and m is the number of elements matching the key
-    auto range = dominoMap.equal_range(head->leftSymbol);
 
+    auto range = dominoMap.equal_range(head->leftSymbol);
     if (range.first != range.second) {
         DominoNode* domino = range.first->second;
         if (!domino->isPlaced) {
@@ -76,8 +73,8 @@ DominoNode* DominoesWorstCase::addRightDomino() {
 
     // Get all dominoes with the same right symbol as the tail
     DominoNode* matchingDomino = nullptr;
-    auto range = dominoMap.equal_range(tail->rightSymbol);
 
+    auto range = dominoMap.equal_range(tail->rightSymbol);
     if (range.first != range.second) {
         DominoNode* domino = range.first->second;
         if (!domino->isPlaced) {

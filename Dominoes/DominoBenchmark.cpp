@@ -16,7 +16,7 @@
 DominoUtils dominoUtils;
 
 template<class DominoImplementation>
-std::chrono::nanoseconds timingTest(int numTests, std::string path) {
+std::chrono::nanoseconds timingCreateLineTest(int numTests, std::string path) {
     DominoNode* startingDomino = dominoUtils.getStartingDomino(path + "starting-domino.txt");
     const std::list<DominoNode*> inputDominoes = dominoUtils.getInputDominoes(path + "input-uncoloured.txt");
     const std::string expectedDominoes = dominoUtils.getOutputDominoes(path + "output-left_right_turns.txt");
@@ -36,10 +36,32 @@ std::chrono::nanoseconds timingTest(int numTests, std::string path) {
     return meanTimePerLookup;
 }
 
+template<class DominoImplementation>
+std::chrono::nanoseconds timingFullTest(int numTests, std::string path) {
+    DominoNode* startingDomino = dominoUtils.getStartingDomino(path + "starting-domino.txt");
+    const std::list<DominoNode*> inputDominoes = dominoUtils.getInputDominoes(path + "input-uncoloured.txt");
+    const std::string expectedDominoes = dominoUtils.getOutputDominoes(path + "output-left_right_turns.txt");
+
+    std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
+
+    for (int i = 0; i < numTests; ++i) {
+        DominoImplementation dominoLine(startingDomino, inputDominoes);
+        dominoUtils.createDominoLine(dominoLine);
+    }
+
+    std::chrono::steady_clock::time_point endTime = std::chrono::steady_clock::now();
+
+    auto timeTaken = std::chrono::duration_cast<std::chrono::nanoseconds>(endTime - startTime);
+
+    std::chrono::nanoseconds meanTimePerLookup = timeTaken / numTests;
+
+    return meanTimePerLookup;
+}
+
 void iterateTests() {
     std::vector<std::string> testSizes = {
-            /*"10", "30", "60",
-            "100", "300", "600",*/
+            "10", "30", "60",
+            "100", "300", "600",
             "1K", "3K", "6K",
             "10K", "30K", "60K",
             "100K", "300K", "600K",
@@ -47,21 +69,34 @@ void iterateTests() {
     };
     int numTests = 1;
 
-    std::vector<std::chrono::nanoseconds> times_worst_case;
-    std::vector<std::chrono::nanoseconds> times_average_case;
+    std::vector<std::chrono::nanoseconds> timesWorstCaseCreateLine;
+    std::vector<std::chrono::nanoseconds> timesAverageCaseCreateLine;
+    std::vector<std::chrono::nanoseconds> timesWorstCaseFull;
+    std::vector<std::chrono::nanoseconds> timesAverageCaseFull;
 
     for (std::string testSize : testSizes) {
         std::cout << "Running tests for " << testSize << " dominoes" << std::endl;
         std::string path = "dominoes-test_data/" + testSize + "/" + testSize + "-";
-        times_worst_case.push_back(timingTest<DominoesWorstCase>(numTests, path));
-        times_average_case.push_back(timingTest<DominoesAverageCase>(numTests, path));
+        timesWorstCaseCreateLine.push_back(timingCreateLineTest<DominoesWorstCase>(numTests, path));
+        timesAverageCaseCreateLine.push_back(timingCreateLineTest<DominoesAverageCase>(numTests, path));
+        timesWorstCaseFull.push_back(timingFullTest<DominoesWorstCase>(numTests, path));
+        timesAverageCaseFull.push_back(timingFullTest<DominoesAverageCase>(numTests, path));
     }
 
     std::ofstream file;
-    file.open("benchmarkGraphGen.csv");
+    file.open("benchmarkCreateLineTest.csv");
     file << "testSize,worstCaseTime,averageCaseTime\n";
     for (int i = 0; i < testSizes.size(); ++i) {
-        file << testSizes[i] << "," << times_worst_case[i].count() << "," << times_average_case[i].count() << "\n";
+        file << testSizes[i] << "," << timesWorstCaseCreateLine[i].count() << ","
+             << timesAverageCaseCreateLine[i].count() << "\n";
+    }
+    file.close();
+
+    file.open("benchmarkFullTest.csv");
+    file << "testSize,worstCaseTime,averageCaseTime\n";
+    for (int i = 0; i < testSizes.size(); ++i) {
+        file << testSizes[i] << "," << timesWorstCaseFull[i].count() << ","
+             << timesAverageCaseFull[i].count() << "\n";
     }
     file.close();
 }
@@ -70,7 +105,8 @@ int main() {
     //iterateTests();
 
     Py_Initialize();
-    PyRun_SimpleString("exec(open(\"benchmarkGraphGen.py\").read())");
+    PyRun_SimpleString("exec(open(\"benchmarkCreateLineTest.py\").read())");
+    PyRun_SimpleString("exec(open(\"benchmarkFullTest.py\").read())");
     Py_Finalize();
 
     return 0;

@@ -56,4 +56,5 @@ add_executable(Dominoes_Benchmarks
 target_link_libraries(Dominoes_Tests PRIVATE GTest::gtest_main)
 target_link_libraries(Dominoes_Benchmarks PRIVATE Python3::Python)
 
-configure_file(benchmarkGraphGen.py ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/benchmarkGraphGen.py COPYONLY)
+configure_file(benchmarkCreateLineTest.py ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/benchmarkCreateLineTest.py COPYONLY)
+configure_file(benchmarkFullTest.py ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/benchmarkFullTest.py COPYONLY)
