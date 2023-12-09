@@ -14,10 +14,7 @@ private:
     int totalDominoes;
 
     std::multimap<std::string, DominoNode*> dominoMap;
-    std::unordered_set<DominoNode*> unplacedDominoes;
     std::list<DominoNode*> dominoLine;
-
-    DominoNode* placeDomino(DominoNode* domino);
 
 public:
     DominoesWorstCase(DominoNode* startingDomino, const std::list<DominoNode*>& inputDominoes);

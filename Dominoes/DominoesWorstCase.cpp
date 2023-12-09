@@ -11,11 +11,7 @@ DominoesWorstCase::DominoesWorstCase(DominoNode* startingDomino, const std::list
     for (auto& domino : inputDominoes) {
         dominoMap.insert({domino->leftSymbol, domino});
         dominoMap.insert({domino->rightSymbol, domino});
-        unplacedDominoes.insert(domino);
     }
-
-    // Remove the starting domino from unplaced dominoes
-    unplacedDominoes.erase(startingDomino);
 
     placedDominoes = 1;
     totalDominoes = inputDominoes.size() + 1;
@@ -25,15 +21,6 @@ DominoesWorstCase::~DominoesWorstCase() {
     for (const auto& domino : dominoLine) {
         delete domino;
     }
-}
-
-DominoNode* DominoesWorstCase::placeDomino(DominoNode* domino) {
-    domino->isPlaced = true;
-    placedDominoes++;
-    dominoMap.erase(domino->leftSymbol);
-    dominoMap.erase(domino->rightSymbol);
-    unplacedDominoes.erase(domino);
-    return domino;
 }
 
 DominoNode* DominoesWorstCase::addLeftDomino() {
@@ -50,7 +37,7 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
 
     if (range.first != range.second) {
         DominoNode* domino = range.first->second;
-        if (!domino->isPlaced && unplacedDominoes.find(domino) != unplacedDominoes.end()) {
+        if (!domino->isPlaced) {
             if (domino->leftSymbol == head->leftSymbol) {
                 std::swap(domino->leftSymbol, domino->rightSymbol); // Flip domino
             }
@@ -76,7 +63,6 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
                 ++it;
             }
         }
-        unplacedDominoes.erase(matchingDomino);
         return matchingDomino;
     }
 
@@ -94,7 +80,7 @@ DominoNode* DominoesWorstCase::addRightDomino() {
 
     if (range.first != range.second) {
         DominoNode* domino = range.first->second;
-        if (!domino->isPlaced && unplacedDominoes.find(domino) != unplacedDominoes.end()) {
+        if (!domino->isPlaced) {
             if (domino->rightSymbol == tail->rightSymbol) {
                 std::swap(domino->leftSymbol, domino->rightSymbol);
             }
@@ -119,8 +105,6 @@ DominoNode* DominoesWorstCase::addRightDomino() {
                 ++it;
             }
         }
-
-        unplacedDominoes.erase(matchingDomino);
         return matchingDomino;
     }
 
