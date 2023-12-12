@@ -11,7 +11,7 @@ DominoesConvoluted::DominoesConvoluted(std::pair<BlueSymbol, RedSymbol> starting
 
     // 3. Iteratively calculate the positions of the red symbols
     int distance = 1;
-    while (distance < listA.size() + 1) {
+    while (distance < inputDominoes.size() + 1) {
         // a. Make a copy of List A called ListB
         std::list<std::pair<BlueSymbol, RedSymbol>> listB = listA;
 
@@ -39,45 +39,25 @@ DominoesConvoluted::DominoesConvoluted(std::pair<BlueSymbol, RedSymbol> starting
         // Until we reach the end of List B
         // Skip the if-conditions involving Lists A or P if the end of that list has already been reached
         while (itB != listB.end()) {
-            std::cout << "==========================" << std::endl;
-            std::cout << "itA: ";
-            itA != listA.end() ? std::cout << itA->first << ":" << itA->second : std::cout << "end";
-            std::cout << std::endl;
-            std::cout << "itB: ";
-            std::cout << itB->first << ":" << itB->second << " ";
-            std::cout << std::endl;
-            std::cout << "itP: ";
-            itP != listP.end() ? std::cout << itP->first << ":" << itP->second : std::cout << "end";
-            std::cout << std::endl;
             // If b1 = a2, append (a1, b2) to List C, and advance Lists A and B once
             if (itA != listA.end() && itB->first == itA->second) {
-                std::cout << "itA != listA.end() && itB->first == itA->second" << std::endl;
-                std::cout << itA->first << " " << itB->second << std::endl;
                 listC.push_back({itA->first, itB->second});
                 itA++;
                 itB++;
             }
             // Else if b1 = p1, append (b2, p2+distance) to the front of List P, and advance Lists B and P once
-            else if (itP != listP.end() && itA != listA.end() && itB->first == itP->first) { // This can literally never be true. itB->first is literally never equal to itP->first
-                std::cout << "itP != listP.end() && itA != listA.end() && itB->first == itP->first" << std::endl;
-                std::cout << itB->second << " " << itP->second + distance << std::endl;
+            else if (itP != listP.end() && itB->first == itP->first) {
                 listP.push_front({itB->second, itP->second + distance});
                 itB++;
                 itP++;
             }
             // Else if b1 > p1, advance List P once
             else if (itP != listP.end() && itB->first > itP->first) {
-                std::cout << itB->first + " bigger than " + itP->first << std::endl;
                 itP++;
             }
             // Else if b1 > a2, advance List A once
             else if (itA != listA.end() && itB->first > itA->second) {
-                std::cout << itB->first + " bigger than " + itA->second << std::endl;
                 itA++;
-            }
-            else {
-                std::cout << "itB incremented" << std::endl;
-                itB++;
             }
         }
 
