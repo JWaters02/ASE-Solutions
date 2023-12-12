@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
+import matplotlib.ticker as ticker
 
 csv_file_path = "benchmarkCreateLineTest.csv"
 try:
@@ -11,22 +13,36 @@ try:
     if missing_columns:
         raise ValueError(f"Missing columns: {', '.join(missing_columns)}")
 
-    testSize = data['testSize']
-    worstCaseTime = data['worstCaseTime']
-    averageCaseTime = data['averageCaseTime']
+    data['testSize'] = data['testSize'].replace('K', 'e3', regex=True).replace('M', 'e6', regex=True).astype(float)
 
-    worstCaseTime = worstCaseTime / 1000000000
-    averageCaseTime = averageCaseTime / 1000000000
+    testSize = data['testSize']
+    worstCaseTime = data['worstCaseTime'] / 1e9
+    averageCaseTime = data['averageCaseTime'] / 1e9
 
     plt.figure(figsize=(10, 6))
+
+    # plt.yscale('log')
 
     plt.plot(testSize, worstCaseTime, label='Dominoes Worst Case')
     plt.plot(testSize, averageCaseTime, label='Dominoes Average Case')
 
+    max_test_size = max(testSize)
+    theoretical_test_sizes = np.linspace(1, max_test_size, num=1000)
+    # plt.plot(theoretical_test_sizes, np.log2(theoretical_test_sizes) / 1e1, label='Theoretical O(log n)', linestyle='--')
+    # plt.plot(theoretical_test_sizes, theoretical_test_sizes / 1e5, label='Theoretical O(n)', linestyle='--')
+    # plt.plot(theoretical_test_sizes, (theoretical_test_sizes * np.log2(theoretical_test_sizes)) / 1e6, label='Theoretical O(n log n)', linestyle='--')
+    # plt.plot(theoretical_test_sizes, (theoretical_test_sizes * (np.log2(theoretical_test_sizes) ** 2)) / 1e6, label='Theoretical O(n log^2 n)', linestyle='--')
+
     plt.xlabel('Test Size')
     plt.ylabel('Time (s)')
-    plt.legend()
 
+    # Set axis scales and limits
+    plt.xlim(left=0, right=max_test_size)
+
+    # Format the y-axis to show time in full integer seconds
+    plt.gca().yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, _: '{:g}'.format(y)))
+
+    plt.legend()
     plt.title('Dominoes Time Comparison (Only for Creating the line)')
     plt.grid(True)
     plt.show()

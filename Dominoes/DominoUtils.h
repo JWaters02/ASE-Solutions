@@ -105,10 +105,7 @@ std::string DominoUtils::getOutputDominoes(const std::string &filename) {
 
 template<class T>
 void DominoUtils::createDominoLine(T& dominoLine) {
-    int i = 0;
     while (!dominoLine.checkLineCompleted()) {
-        i++;
-        //if (i == 10) break;
         dominoLine.addLeftDomino();
         if (dominoLine.checkLineCompleted()) break;
         dominoLine.addRightDomino();
