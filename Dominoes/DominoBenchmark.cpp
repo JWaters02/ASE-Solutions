@@ -95,8 +95,8 @@ void iterateTests() {
     for (std::string testSize : testSizes) {
         std::cout << "Running tests for " << testSize << " dominoes" << std::endl;
         std::string path = "dominoes-test_data/" + testSize + "/" + testSize + "-";
-//        timesWorstCaseCreateLine.push_back(timingCreateLineTest<DominoesWorstCase>(numTests, path));
-//        timesAverageCaseCreateLine.push_back(timingCreateLineTest<DominoesAverageCase>(numTests, path));
+        timesWorstCaseCreateLine.push_back(timingCreateLineTest<DominoesWorstCase>(numTests, path));
+        timesAverageCaseCreateLine.push_back(timingCreateLineTest<DominoesAverageCase>(numTests, path));
 //        timesWorstCaseFull.push_back(timingFullTest<DominoesWorstCase>(numTests, path));
 //        timesAverageCaseFull.push_back(timingFullTest<DominoesAverageCase>(numTests, path));
 //        timesConvolutedFull.push_back(timingFullTestConvoluted(numTests, path));
@@ -104,7 +104,7 @@ void iterateTests() {
 
     std::cout << "Writing results to file" << std::endl;
     std::ofstream file;
-    file.open("benchmarkCreateLineTest.csv");
+    file.open("benchmarkCreateLineTest2.csv");
     file << "testSize,worstCaseTime,averageCaseTime\n";
     for (int i = 0; i < testSizes.size(); ++i) {
         file << testSizes[i] << "," << timesWorstCaseCreateLine[i].count() << ","
@@ -127,8 +127,8 @@ int main() {
     //iterateTests();
 
     Py_Initialize();
-    PyRun_SimpleString("exec(open(\"benchmarkCreateLineTest.py\").read())");
-//    PyRun_SimpleString("exec(open(\"benchmarkFullTest.py\").read())");
+//    PyRun_SimpleString("exec(open(\"benchmarkCreateLineTest.py\").read())");
+    PyRun_SimpleString("exec(open(\"benchmarkFullTest.py\").read())");
     Py_Finalize();
 
     return 0;
