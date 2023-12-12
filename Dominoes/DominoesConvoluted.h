@@ -18,8 +18,3 @@ public:
 
     void displayDominoLine(std::ostream& stream = std::cout) const;
 };
-
-// Usage Example:
-// std::list<std::pair<Symbol, Symbol>> dominoes = {{'A', 'B'}, {'C', 'D'}, ...};
-// DominoLine dl({'X', 'Y'}, dominoes);
-// dl.displayLine();

@@ -12,11 +12,11 @@ int main() {
         dominoUtils.createDominoLine(dominoLine);
         dominoLine.displayDominoLine(std::cerr);*/
 
-        std::pair<std::string, std::string> startingDomino = dominoUtils.getStartingDominoConvoluted("dominoes-test_data/example/example-starting-domino.txt");
+        /*std::pair<std::string, std::string> startingDomino = dominoUtils.getStartingDominoConvoluted("dominoes-test_data/example/example-starting-domino.txt");
         const std::list<std::pair<std::string, std::string>> inputDominoes = dominoUtils.getInputDominoesConvoluted("dominoes-test_data/example/example-input-coloured.txt");
-        /*std::pair<std::string, std::string> startingDomino = dominoUtils.getStartingDominoConvoluted("dominoes-test_data/10/10-starting-domino.txt");
-        const std::list<std::pair<std::string, std::string>> inputDominoes = dominoUtils.getInputDominoesConvoluted("dominoes-test_data/10/10-input-coloured.txt");
-        */DominoesConvoluted dominoLine(startingDomino, inputDominoes);
+        */std::pair<std::string, std::string> startingDomino = dominoUtils.getStartingDominoConvoluted("dominoes-test_data/30/30-starting-domino.txt");
+        const std::list<std::pair<std::string, std::string>> inputDominoes = dominoUtils.getInputDominoesConvoluted("dominoes-test_data/30/30-input-coloured.txt");
+        DominoesConvoluted dominoLine(startingDomino, inputDominoes);
         dominoLine.displayDominoLine(std::cout);
     } catch (const std::exception& e) {
         std::cout << e.what() << std::endl;
