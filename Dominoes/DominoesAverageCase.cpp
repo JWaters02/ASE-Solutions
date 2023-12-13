@@ -21,21 +21,22 @@ DominoesAverageCase::~DominoesAverageCase() {
     }
 }
 
-DominoNode* DominoesAverageCase::addLeftDomino() {
-    if (head == nullptr) {
+DominoNode* DominoesAverageCase::addDomino(DominoNode*& end, bool addToLeft) {
+    if (end == nullptr) {
         throw std::logic_error("No starting domino in the line");
     }
 
-    // This can never be longer than 2 elements
-    const auto& dominoList = dominoMap[head->leftSymbol];
+    std::string symbol = addToLeft ? end->leftSymbol : end->rightSymbol;
+    const auto& dominoList = dominoMap[symbol];
     for (auto& domino : dominoList) {
         if (!domino->isPlaced) {
-            if (domino->leftSymbol == head->leftSymbol) {
-                std::swap(domino->leftSymbol, domino->rightSymbol); // Flip domino
+            if ((addToLeft && domino->leftSymbol == symbol) ||
+                (!addToLeft && domino->rightSymbol == symbol)) {
+                std::swap(domino->leftSymbol, domino->rightSymbol);
             }
             domino->isPlaced = true;
-            head = domino;
-            dominoLine.push_front(domino);
+            end = domino;
+            addToLeft ? dominoLine.push_front(domino) : dominoLine.push_back(domino);
             placedDominoes++;
             return domino;
         }
@@ -43,26 +44,12 @@ DominoNode* DominoesAverageCase::addLeftDomino() {
     return nullptr;
 }
 
-DominoNode* DominoesAverageCase::addRightDomino() {
-    if (tail == nullptr) {
-        throw std::logic_error("No starting domino in the line");
-    }
+DominoNode* DominoesAverageCase::addLeftDomino() {
+    return addDomino(head, true);
+}
 
-    // This can never be longer than 2 elements
-    const auto& dominoList = dominoMap[tail->rightSymbol];
-    for (auto& domino : dominoList) {
-        if (!domino->isPlaced) {
-            if (domino->rightSymbol == tail->rightSymbol) {
-                std::swap(domino->leftSymbol, domino->rightSymbol); // Flip domino
-            }
-            domino->isPlaced = true;
-            tail = domino;
-            dominoLine.push_back(domino);
-            placedDominoes++;
-            return domino;
-        }
-    }
-    return nullptr;
+DominoNode* DominoesAverageCase::addRightDomino() {
+    return addDomino(tail, false);
 }
 
 bool DominoesAverageCase::checkLineCompleted() const {

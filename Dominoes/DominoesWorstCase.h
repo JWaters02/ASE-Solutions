@@ -16,6 +16,8 @@ private:
     std::multimap<std::string, DominoNode*> dominoMap;
     std::list<DominoNode*> dominoLine;
 
+    DominoNode* addDomino(DominoNode*& end, bool addToLeft);
+
 public:
     DominoesWorstCase(DominoNode* startingDomino, const std::list<DominoNode*>& inputDominoes);
     ~DominoesWorstCase() override;

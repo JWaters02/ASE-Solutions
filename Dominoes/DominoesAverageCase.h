@@ -15,6 +15,8 @@ private:
     std::unordered_map<std::string, std::list<DominoNode*>> dominoMap;
     std::list<DominoNode*> dominoLine;
 
+    DominoNode* addDomino(DominoNode*& end, bool addToLeft);
+
 public:
     DominoesAverageCase(DominoNode* startingDomino, const std::list<DominoNode*>& inputDominoes);
     ~DominoesAverageCase() override;

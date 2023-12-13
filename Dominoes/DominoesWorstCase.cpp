@@ -5,9 +5,6 @@ DominoesWorstCase::DominoesWorstCase(DominoNode* startingDomino, const std::list
     head = tail = startingDomino;
     dominoLine.push_back(startingDomino);
 
-    // Populate the dominoMap hash map with DominoNode objects
-    // For each domino, create a new DominoNode and insert it into the map
-    // Then track unplaced dominoes
     for (auto& domino : inputDominoes) {
         dominoMap.insert({domino->leftSymbol, domino});
         dominoMap.insert({domino->rightSymbol, domino});
@@ -23,20 +20,21 @@ DominoesWorstCase::~DominoesWorstCase() {
     }
 }
 
-DominoNode* DominoesWorstCase::addLeftDomino() {
-    if (head == nullptr) {
+DominoNode* DominoesWorstCase::addDomino(DominoNode*& end, bool addToLeft) {
+    if (end == nullptr) {
         throw std::logic_error("No starting domino in the line");
     }
 
-    // Get all dominoes with the same left symbol as the head
+    std::string symbol = addToLeft ? end->leftSymbol : end->rightSymbol;
+    auto range = dominoMap.equal_range(symbol);
     DominoNode* matchingDomino = nullptr;
 
-    auto range = dominoMap.equal_range(head->leftSymbol);
     if (range.first != range.second) {
         DominoNode* domino = range.first->second;
         if (!domino->isPlaced) {
-            if (domino->leftSymbol == head->leftSymbol) {
-                std::swap(domino->leftSymbol, domino->rightSymbol); // Flip domino
+            if ((addToLeft && domino->leftSymbol == symbol) ||
+                (!addToLeft && domino->rightSymbol == symbol)) {
+                std::swap(domino->leftSymbol, domino->rightSymbol);
             }
             matchingDomino = domino;
             dominoMap.erase(range.first);
@@ -44,15 +42,16 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
     }
 
     if (matchingDomino) {
-        head = matchingDomino;
-        dominoLine.push_front(matchingDomino);
+        end = matchingDomino;
+        addToLeft ? dominoLine.push_front(matchingDomino) : dominoLine.push_back(matchingDomino);
         matchingDomino->isPlaced = true;
         placedDominoes++;
 
         // Correctly erase the placed domino from the multimap - as it can contain multiple elements with the same key
         // And it only ever does two iterations to erase the correct symbol
         // But with equal_range it is O(log n + m) anyway
-        range = dominoMap.equal_range(matchingDomino->leftSymbol);
+        range = addToLeft ? dominoMap.equal_range(matchingDomino->leftSymbol)
+                          : dominoMap.equal_range(matchingDomino->rightSymbol);
         for (auto it = range.first; it != range.second;) {
             if (it->second == matchingDomino) {
                 it = dominoMap.erase(it);
@@ -66,46 +65,12 @@ DominoNode* DominoesWorstCase::addLeftDomino() {
     return nullptr;
 }
 
+DominoNode* DominoesWorstCase::addLeftDomino() {
+    return addDomino(head, true);
+}
+
 DominoNode* DominoesWorstCase::addRightDomino() {
-    if (tail == nullptr) {
-        throw std::logic_error("No starting domino in the line");
-    }
-
-    // Get all dominoes with the same right symbol as the tail
-    DominoNode* matchingDomino = nullptr;
-
-    auto range = dominoMap.equal_range(tail->rightSymbol);
-    if (range.first != range.second) {
-        DominoNode* domino = range.first->second;
-        if (!domino->isPlaced) {
-            if (domino->rightSymbol == tail->rightSymbol) {
-                std::swap(domino->leftSymbol, domino->rightSymbol);
-            }
-            dominoMap.erase(range.first);
-            matchingDomino = domino;
-        }
-    }
-
-    if (matchingDomino) {
-        tail = matchingDomino;
-        dominoLine.push_back(matchingDomino);
-        matchingDomino->isPlaced = true;
-        placedDominoes++;
-
-        // Correctly erase the placed domino from the multimap - as it can contain multiple elements with the same key
-        // And it only ever does two iterations to erase the correct symbol
-        range = dominoMap.equal_range(matchingDomino->rightSymbol);
-        for (auto it = range.first; it != range.second;) {
-            if (it->second == matchingDomino) {
-                it = dominoMap.erase(it);
-            } else {
-                ++it;
-            }
-        }
-        return matchingDomino;
-    }
-
-    return nullptr;
+    return addDomino(tail, false);
 }
 
 bool DominoesWorstCase::checkLineCompleted() const {
