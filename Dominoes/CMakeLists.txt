@@ -1,5 +1,6 @@
 # example build command:
 # cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja.exe -G Ninja -S "<path to Dominoes>" -B "cmake-build-debug"
+# make sure you have the test data in Dominoes directory so that it can be moved to the build directory
 
 cmake_minimum_required(VERSION 3.25)
 project(Dominoes)
