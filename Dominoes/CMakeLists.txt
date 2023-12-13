@@ -1,5 +1,10 @@
+# example build command:
+# cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja.exe -G Ninja -S "<path to Dominoes>" -B "cmake-build-debug"
+
 cmake_minimum_required(VERSION 3.25)
 project(Dominoes)
+
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
@@ -14,7 +19,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-file(COPY dominoes-test_data DESTINATION ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
+file(COPY dominoes-test_data DESTINATION ${CMAKE_BINARY_DIR})
 
 set(COMMON_SRC DominoUtils.h DominoesInterface.h)
 set(COMMON_SRC_TYPES
@@ -56,5 +61,5 @@ add_executable(Dominoes_Benchmarks
 target_link_libraries(Dominoes_Tests PRIVATE GTest::gtest_main)
 target_link_libraries(Dominoes_Benchmarks PRIVATE Python3::Python)
 
-configure_file(benchmarkCreateLineTest.py ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/benchmarkCreateLineTest.py COPYONLY)
-configure_file(benchmarkFullTest.py ${CMAKE_BINARY_DIR}/${PROJECT_NAME}/benchmarkFullTest.py COPYONLY)
+configure_file(benchmarkCreateLineTest.py ${CMAKE_BINARY_DIR}/benchmarkCreateLineTest.py COPYONLY)
+configure_file(benchmarkFullTest.py ${CMAKE_BINARY_DIR}/benchmarkFullTest.py COPYONLY)

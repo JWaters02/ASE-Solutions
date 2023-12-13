@@ -22,7 +22,7 @@ try:
     plt.figure(figsize=(10, 6))
 
     # plt.yscale('log')
-    plt.xscale('log')
+    # plt.xscale('log')
 
     plt.plot(testSize, worstCaseTime, label='Dominoes Worst Case')
     plt.plot(testSize, averageCaseTime, label='Dominoes Average Case')
@@ -31,7 +31,7 @@ try:
     theoretical_test_sizes = np.linspace(1, max_test_size, num=1000)
     plt.plot(theoretical_test_sizes, np.log2(theoretical_test_sizes) / 1e1, label='Theoretical O(log n)', linestyle='--')
     plt.plot(theoretical_test_sizes, theoretical_test_sizes / 1e5, label='Theoretical O(n)', linestyle='--')
-    # plt.plot(theoretical_test_sizes, (theoretical_test_sizes * np.log2(theoretical_test_sizes)) / 1e6, label='Theoretical O(n log n)', linestyle='--')
+    # plt.plot(theoretical_test_sizes, (theoretical_test_sizes * np.log2(theoretical_test_sizes)) / 1e5, label='Theoretical O(n log n)', linestyle='--')
     # plt.plot(theoretical_test_sizes, (theoretical_test_sizes * (np.log2(theoretical_test_sizes) ** 2)) / 1e6, label='Theoretical O(n log^2 n)', linestyle='--')
 
     plt.xlabel('Number of input dominoes')
